@@ -7,9 +7,7 @@ from tkinter import ttk
 from scipy.integrate import odeint
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-
-sys.path.append(r"C:/Users/lacri/Desktop/UNI/MAGISTRALE/PhysicalMethodsForBiology/EPaci/Progetto/BozzeCodes")
-import SimulationFunctionsOnly
+import SimulationFunctionsOnly_CP as SimulationFunctionsOnly
 
 
 def start_simulation():
