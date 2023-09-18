@@ -7,172 +7,167 @@ from tkinter import ttk
 from scipy.integrate import odeint
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-
-sys.path.append(r"C:/Users/lacri/Desktop/UNI/MAGISTRALE/PhysicalMethodsForBiology/EPaci/Progetto/BozzeCodes")
-import SimulationFunctionsOnly_ES
+import SimulationFunctionsOnly
 
 
 def start_simulation():
 
     # ESTABLISHING INITIAL CONDITIONS AND PARAMETERS
 
-    initial_S = float(entry1Switch.get()) 
-    initial_E = float(entry2Switch.get()) 
-    initial_D = float(entry3Switch.get()) 
+    ET = float(entry_ET.get())
+    DT = float(entry_DT.get())
+    ST = float(entry_ST.get())
 
-    initial_Sp = 0
-    initial_C = 0
-    initial_Cp = 0
-    
-    initial_input = [initial_S, initial_E, initial_D]
-    initial_conditions = [initial_Sp, initial_C, initial_Cp]
+    initial_SP = 0
+    initial_C  = 0
+    initial_CP = 0
 
-    
+    initial_conditions = [initial_SP, initial_C, initial_CP]
+
+
     # Getting the user input from the entry widgets and setting constants
 
-    ke_value = float(entry4Switch.get())    # ke value
-    kbe_value = float(entry5Switch.get())    # kbe value
-    kfe_value = float(entry6Switch.get())  # kfe value 
-    kbd_value = float(entry7Switch.get())  # kbd value  
-    kfd_value = float(entry8Switch.get())  # kfd value  
-    kd_value = float(entry9Switch.get())  # kfd value 
+    kfe = float(entry_kfe.get())  # kfe value
+    kbe = float(entry_kbe.get())  # kbe value
+    ke  = float(entry_ke.get())   # ke value
+    kfd = float(entry_kfd.get())  # kfd value
+    kbd = float(entry_kbd.get())  # kbd value
+    kd  = float(entry_kd.get())   # kd value
 
-    simkME, simkMD = SimulationFunctionsOnly_ES.Constants_Switch (ke_value, kbe_value, kfe_value, kbd_value, kfd_value, kd_value)
+    kME, kMD = SimulationFunctionsOnly.Constants_Switch(kfe, kbe, ke, kfd, kbd, kd)
     
     # SETTING TIME SPAN
 
     # Getting the user input for simulation time
-    simulation_time_Switch = float(entry10Switch.get())  # Simulation time
-    
+    simulation_time = float(entry_time.get())  # Simulation time
+
     # Creating the time span based on user-defined simulation time
-    time_span_Switch = np.linspace(0, simulation_time_Switch, 1000)
+    time_span = np.linspace(0, simulation_time, 1000)
 
     # solving odes
 
+    Full_Model_Solution = odeint(SimulationFunctionsOnly.Full_Model_Switch, initial_conditions, time_span, args=(ST, ET, DT, kfe, kbe, ke, kfd, kbd, kd))
+    QSSAsolution = odeint(SimulationFunctionsOnly.QSSA_Switch, initial_SP, time_span, args=(ST, ET, DT, ke, kd, kME, kMD))
+    tQSSAsolution = odeint(SimulationFunctionsOnly.tQSSA_Switch, initial_SP+initial_CP, time_span, args=(ST, ET, DT, ke, kd, kME, kMD))
 
-    Full_Model_Solution_Switch = odeint (SimulationFunctionsOnly_ES.Full_Model_Switch, initial_conditions, time_span_Switch, args=(*initial_input, kfd_value, kbd_value, ke_value, kfe_value, kbe_value, kd_value))
-    QSSAsolution_Switch = odeint (SimulationFunctionsOnly_ES.QSSA_Switch, initial_conditions[0], time_span_Switch, args=(*initial_input, ke_value, kd_value, simkME, simkMD))
-    tQSSAsolution_Switch = odeint (SimulationFunctionsOnly_ES.tQSSA_Switch, initial_conditions[0], time_span_Switch, args=(*initial_input, ke_value, kd_value, simkME, simkMD))
+    Full_Model_SP_hat = Full_Model_Solution[:, 0] + Full_Model_Solution[:, 2]
+    QSSA_SP_hat = QSSAsolution[:, 0]
+    tQSSA_SP_hat = tQSSAsolution[:, 0]
 
-    Full_Model_Switch_values = Full_Model_Solution_Switch[:, 0] + Full_Model_Solution_Switch[:, 2]
-    QSSA_Switch_values = QSSAsolution_Switch[:, 0]
-    tQSSA_Switch_values = tQSSAsolution_Switch[:, 0]
+    # Ratio Sp/ST according to the 3 models
 
-    # Ratio Sp/S according to the 3 models
-
-    Full_Model_Switch_ratio_values = Full_Model_Switch_values / initial_S
-    QSSA_Switch_ratio_values = QSSA_Switch_values / initial_S
-    tQSSA_Switch_ratio_values = tQSSA_Switch_values / initial_S
-
-    # Plot as a function of ke, kd, E and D ...
+    Full_Model_SP_hat_ST = Full_Model_SP_hat / ST
+    QSSA_SP_hat_ST = QSSA_SP_hat / ST
+    tQSSA_SP_hat_ST = tQSSA_SP_hat / ST
 
 
     # Plots
 
     # Create a new figure for the plot
-    fig_Switch, ax_Switch = plt.subplots()
-    
-    # Plot the data
-    ax_Switch.plot(time_span_Switch, Full_Model_Switch_ratio_values, label='Full Model', color='yellow', linewidth=3.5)
-    ax_Switch.plot(time_span_Switch, QSSA_Switch_ratio_values , label='QSSA - Sp/Stot', linewidth=2)
-    ax_Switch.plot(time_span_Switch, tQSSA_Switch_ratio_values , label='tQSSA - Sp/S-hat', linestyle='--', color='black')
+    fig, ax = plt.subplots()
 
-    ax_Switch.set_xlabel('Time')
-    ax_Switch.set_ylabel('Sp/S')
-    ax_Switch.legend()
+    # Plot the data
+    ax.plot(time_span, Full_Model_SP_hat_ST, label='Full Model', color='yellow', linewidth=3.5)
+    ax.plot(time_span, QSSA_SP_hat_ST, label='QSSA', linewidth=2)
+    ax.plot(time_span, tQSSA_SP_hat_ST, label='tQSSA', linestyle='--', color='black')
+
+    ax.set_xlabel('Time')
+    ax.set_ylabel('SP_hat/ST')
+    ax.legend()
 
     # Embed the plot in the Tkinter window
-    canvasSwitch = FigureCanvasTkAgg(fig_Switch, master=rootSwitch)
-    canvasSwitch.get_tk_widget().grid(row=5, columnspan=6) 
-
-    #plt.show()
-
-
-    # Replace the print statement with your simulation code
-    #print(f"Running simulation with parameters: Initial S={initial_S}, Initial E={initial_E}, kf={kf_value}, kb={kb_value}, kcat={kcat_value}")
+    canvas = FigureCanvasTkAgg(fig, master=rootSwitch)
+    canvas.get_tk_widget().grid(row=5, columnspan=6)
 
 
 rootSwitch = tk.Tk()
-rootSwitch.title("Kinetic Reaction Simulator - Switch")
+rootSwitch.title("Kinetic Reaction Simulator - GK Switch")
 
-# Initial S
-label1Switch = ttk.Label(rootSwitch, text="Initial S:")
-label1Switch.grid(row=0, column=0)
+# ET
+label_ET = ttk.Label(rootSwitch, text="ET:")
+label_ET.grid(row=0, column=0)
 
-entry1Switch = ttk.Entry(rootSwitch)
-entry1Switch.grid(row=0, column=1)
+entry_ET = ttk.Entry(rootSwitch)
+entry_ET.insert(0, "100")
+entry_ET.grid(row=0, column=1)
 
-# Initial E
-label2Switch = ttk.Label(rootSwitch, text="Initial E:")
-label2Switch.grid(row=0, column=2)
+# DT
+label_DT = ttk.Label(rootSwitch, text="DT:")
+label_DT.grid(row=0, column=2)
 
-entry2Switch = ttk.Entry(rootSwitch)
-entry2Switch.grid(row=0, column=3)
+entry_DT = ttk.Entry(rootSwitch)
+entry_DT.insert(0, "95")
+entry_DT.grid(row=0, column=3)
 
-# Initial D
-label3Switch = ttk.Label(rootSwitch, text="Initial D:")
-label3Switch.grid(row=0, column=4)
+# ST
+label_ST = ttk.Label(rootSwitch, text="ST:")
+label_ST.grid(row=0, column=4)
 
-entry3Switch = ttk.Entry(rootSwitch)
-entry3Switch.grid(row=0, column=5)
-
-# ke value
-label4Switch = ttk.Label(rootSwitch, text="ke value:")
-label4Switch.grid(row=1, column=0)
-
-entry4Switch = ttk.Entry(rootSwitch)
-entry4Switch.grid(row=1, column=1)
-
-# kbe value
-label5Switch = ttk.Label(rootSwitch, text="kbe value:")
-label5Switch.grid(row=1, column=2)
-
-entry5Switch = ttk.Entry(rootSwitch)
-entry5Switch.grid(row=1, column=3)
+entry_ST = ttk.Entry(rootSwitch)
+entry_ST.insert(0, "100")
+entry_ST.grid(row=0, column=5)
 
 # kfe value
-label6Switch = ttk.Label(rootSwitch, text="kfe value:")
-label6Switch.grid(row=1, column=4)
+label_kfe = ttk.Label(rootSwitch, text="kfe value:")
+label_kfe.grid(row=1, column=0)
 
-entry6Switch = ttk.Entry(rootSwitch)
-entry6Switch.grid(row=1, column=5)
+entry_kfe = ttk.Entry(rootSwitch)
+entry_kfe.insert(0, "10")
+entry_kfe.grid(row=1, column=1)
+
+# kbe value
+label_kbe = ttk.Label(rootSwitch, text="kbe value:")
+label_kbe.grid(row=1, column=2)
+
+entry_kbe = ttk.Entry(rootSwitch)
+entry_kbe.insert(0, "8.3")
+entry_kbe.grid(row=1, column=3)
+
+# ke value
+label_ke = ttk.Label(rootSwitch, text="ke value:")
+label_ke.grid(row=1, column=4)
+
+entry_ke = ttk.Entry(rootSwitch)
+entry_ke.insert(0, "1.7")
+entry_ke.grid(row=1, column=5)
+
+# kfd value
+label_kfd = ttk.Label(rootSwitch, text="kfd value:")
+label_kfd.grid(row=2, column=0)
+
+entry_kfd = ttk.Entry(rootSwitch)
+entry_kfd.insert(0, "10")
+entry_kfd.grid(row=2, column=1)
 
 # kbd value
-label7Switch = ttk.Label(rootSwitch, text="kbd value:")
-label7Switch.grid(row=2, column=0)
+label_kbd = ttk.Label(rootSwitch, text="kbd value:")
+label_kbd.grid(row=2, column=2)
 
-entry7Switch = ttk.Entry(rootSwitch)
-entry7Switch.grid(row=2, column=1)
+entry_kbd = ttk.Entry(rootSwitch)
+entry_kbd.insert(0, "8.3")
+entry_kbd.grid(row=2, column=3)
 
-# kfd value
-label8Switch = ttk.Label(rootSwitch, text="kfd value:")
-label8Switch.grid(row=2, column=2)
+# kd value
+label_kd = ttk.Label(rootSwitch, text="kd value:")
+label_kd.grid(row=2, column=4)
 
-entry8Switch = ttk.Entry(rootSwitch)
-entry8Switch.grid(row=2, column=3)
-
-# kfd value
-label9Switch = ttk.Label(rootSwitch, text="kd value:")
-label9Switch.grid(row=2, column=4)
-
-entry9Switch = ttk.Entry(rootSwitch)
-entry9Switch.grid(row=2, column=5)
+entry_kd = ttk.Entry(rootSwitch)
+entry_kd.insert(0, "1.7")
+entry_kd.grid(row=2, column=5)
 
 
 # Label for Simulation Time
-label10Switch = ttk.Label(rootSwitch, text="Simulation Time:")
-label10Switch.grid(row=3, column=0)
+label_time = ttk.Label(rootSwitch, text="Simulation Time:")
+label_time.grid(row=3, column=0)
 
-entry10Switch = ttk.Entry(rootSwitch)
-entry10Switch.grid(row=3, column=1)
+entry_time = ttk.Entry(rootSwitch)
+entry_time.insert(0, "10")
+entry_time.grid(row=3, column=1)
 
 start_button = ttk.Button(rootSwitch, text="Start Simulation", command=start_simulation)
 start_button.grid(row=3, columnspan=6)
 
-result_labelSwitch= ttk.Label(rootSwitch, text="CONCENTRATION PLOTS")
-result_labelSwitch.grid(row=4, columnspan=6)
-
-#output_text = tk.Text(root, height=5, width=40)
-#output_text.grid(row=4, columnspan=6)
+label_result = ttk.Label(rootSwitch, text="CONCENTRATION PLOTS")
+label_result.grid(row=4, columnspan=6)
 
 rootSwitch.mainloop()
