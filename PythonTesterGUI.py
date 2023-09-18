@@ -64,7 +64,7 @@ def start_simulation():
     ax.plot(time_span, tQSSA_ratio_values, label='tQSSA', linestyle='--', color='black')
 
     ax.set_xlabel('Time')
-    ax.set_ylabel('P/ST')
+    ax.set_ylabel('$P/S_T$')
     ax.legend()
 
     # Embed the plot in the Tkinter window

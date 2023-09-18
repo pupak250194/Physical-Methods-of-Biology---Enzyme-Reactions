@@ -4,7 +4,7 @@ import sys
 import numpy as np
 
 from tkinter import ttk
-from scipy.integrate import odeint
+from scipy.optimize import fsolve
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 import SimulationFunctionsOnly
@@ -14,7 +14,6 @@ def start_simulation():
 
     # ESTABLISHING INITIAL CONDITIONS AND PARAMETERS
 
-    ET = float(entry_ET.get())
     DT = float(entry_DT.get())
     ST = float(entry_ST.get())
 
@@ -38,17 +37,30 @@ def start_simulation():
     
     # SETTING TIME SPAN
 
-    # Getting the user input for simulation time
-    simulation_time = float(entry_time.get())  # Simulation time
+    # Getting the user input for maximum ke ET / kd DT ratio
+    max_ratio = float(entry_max_ratio.get())
 
-    # Creating the time span based on user-defined simulation time
-    time_span = np.linspace(0, simulation_time, 1000)
+    # Creating the ke ET / kd DT ratio span
+    ratio_span = np.linspace(0, max_ratio, 1000)
+
+    # Creating the ET span
+    ET_span = ratio_span * kd * DT / ke
 
     # solving odes
 
-    Full_Model_Solution = odeint(SimulationFunctionsOnly.Full_Model_Switch, initial_conditions, time_span, args=(ST, ET, DT, kfe, kbe, ke, kfd, kbd, kd))
-    QSSAsolution = odeint(SimulationFunctionsOnly.QSSA_Switch, initial_SP, time_span, args=(ST, ET, DT, ke, kd, kME, kMD))
-    tQSSAsolution = odeint(SimulationFunctionsOnly.tQSSA_Switch, initial_SP+initial_CP, time_span, args=(ST, ET, DT, ke, kd, kME, kMD))
+    Full_Model_Solution = []
+    QSSAsolution = []
+    tQSSAsolution = []
+    for ET in ET_span:
+        Full_Model_Solution.append(fsolve(SimulationFunctionsOnly.Full_Model_Switch, initial_conditions, args=(0, ST, ET, DT, kfe, kbe, ke, kfd, kbd, kd)))
+        QSSAsolution.append(fsolve(SimulationFunctionsOnly.QSSA_Switch, initial_SP, args=(0, ST, ET, DT, ke, kd, kME, kMD)))
+        tQSSAsolution.append(fsolve(SimulationFunctionsOnly.tQSSA_Switch, initial_SP+initial_CP, args=(0, ST, ET, DT, ke, kd, kME, kMD)))
+
+    # convert lists to numpy arrays
+
+    Full_Model_Solution = np.array(Full_Model_Solution)
+    QSSAsolution = np.array(QSSAsolution)
+    tQSSAsolution = np.array(tQSSAsolution)
 
     Full_Model_SP_hat = Full_Model_Solution[:, 0] + Full_Model_Solution[:, 2]
     QSSA_SP_hat = QSSAsolution[:, 0]
@@ -67,12 +79,12 @@ def start_simulation():
     fig, ax = plt.subplots()
 
     # Plot the data
-    ax.plot(time_span, Full_Model_SP_hat_ST, label='Full Model', color='yellow', linewidth=3.5)
-    ax.plot(time_span, QSSA_SP_hat_ST, label='QSSA', linewidth=2)
-    ax.plot(time_span, tQSSA_SP_hat_ST, label='tQSSA', linestyle='--', color='black')
+    ax.plot(ratio_span, Full_Model_SP_hat_ST, label='Full Model', color='yellow', linewidth=3.5)
+    ax.plot(ratio_span, QSSA_SP_hat_ST, label='QSSA', linewidth=2)
+    ax.plot(ratio_span, tQSSA_SP_hat_ST, label='tQSSA', linestyle='--', color='black')
 
-    ax.set_xlabel('Time')
-    ax.set_ylabel('$\hat{S}_P/S_T$')
+    ax.set_xlabel('$k_e E_T / k_d D_T$')
+    ax.set_ylabel('steady-state $\hat{S}_P/S_T$')
     ax.legend()
 
     # Embed the plot in the Tkinter window
@@ -81,22 +93,22 @@ def start_simulation():
 
 
 rootSwitch = tk.Tk()
-rootSwitch.title("Kinetic Reaction Simulator - GK Switch")
+rootSwitch.title("Kinetic Reaction Simulator - GK Switch steady state")
 
 # ET
-label_ET = ttk.Label(rootSwitch, text="ET:")
-label_ET.grid(row=0, column=0)
+label_max_ratio = ttk.Label(rootSwitch, text="Max ke ET / kd DT ratio:")
+label_max_ratio.grid(row=0, column=0)
 
-entry_ET = ttk.Entry(rootSwitch)
-entry_ET.insert(0, "100")
-entry_ET.grid(row=0, column=1)
+entry_max_ratio = ttk.Entry(rootSwitch)
+entry_max_ratio.insert(0, "2")
+entry_max_ratio.grid(row=0, column=1)
 
 # DT
 label_DT = ttk.Label(rootSwitch, text="DT:")
 label_DT.grid(row=0, column=2)
 
 entry_DT = ttk.Entry(rootSwitch)
-entry_DT.insert(0, "95")
+entry_DT.insert(0, "100")
 entry_DT.grid(row=0, column=3)
 
 # ST
@@ -155,14 +167,6 @@ entry_kd = ttk.Entry(rootSwitch)
 entry_kd.insert(0, "1.7")
 entry_kd.grid(row=2, column=5)
 
-
-# Label for Simulation Time
-label_time = ttk.Label(rootSwitch, text="Simulation Time:")
-label_time.grid(row=3, column=0)
-
-entry_time = ttk.Entry(rootSwitch)
-entry_time.insert(0, "10")
-entry_time.grid(row=3, column=1)
 
 start_button = ttk.Button(rootSwitch, text="Start Simulation", command=start_simulation)
 start_button.grid(row=3, columnspan=6)
