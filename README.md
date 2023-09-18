@@ -1,4 +1,7 @@
 # Stochastic chemical kinetics
+
+This read me has been written by Ale Lo Cuoco
+
 Stochastic chemical kinetics using Gillespie algorithm (also stochastic simulation algorithm or SSA) and chemical master equation (CME), with application to enzyme kinetics.
 
 Bibliography:
