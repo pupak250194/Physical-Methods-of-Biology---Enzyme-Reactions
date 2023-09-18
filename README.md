@@ -1,6 +1,6 @@
 # Stochastic chemical kinetics
 
-This read me has been written by Ale Lo Cuoco
+This README file has been written by Ale Lo Cuoco and it is about the subfolder named stochastic-chemical-kinetics-main. The README part related to the Diff-Eqs subfolder and the GUI's still needs to be written by me. Have fun and keep updated as we continue to modify our project <3
 
 Stochastic chemical kinetics using Gillespie algorithm (also stochastic simulation algorithm or SSA) and chemical master equation (CME), with application to enzyme kinetics.
 
