@@ -1,13 +1,11 @@
-import tkinter as tk
-import matplotlib.pyplot as plt
-import sys
 import numpy as np
+import matplotlib.pyplot as plt
+import tkinter as tk
 
 from tkinter import ttk
-from scipy.integrate import odeint
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-
+import sys
 sys.path += ['path/to/SimulationFunctionsOnly','path/to/gillespie']
 
 import SimulationFunctionsOnly

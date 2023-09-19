@@ -22,21 +22,15 @@
 #   conda install -c conda-forge ffmpeg
 
 
-import tkinter as tk
-import numpy as np
-
 import matplotlib
 matplotlib.use("TkAgg")
-
 import matplotlib.pyplot as plt
-from matplotlib import animation, colors
-
-import sys
+import tkinter as tk
 
 from tkinter import ttk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-
+import sys
 sys.path += ['path/to/SimulationFunctionsOnly','path/to/gillespie']
 
 import gillespie

@@ -1,13 +1,13 @@
-import tkinter as tk
-import matplotlib.pyplot as plt
-import sys
-import numpy as np
 
-from tkinter import ttk
+import numpy as np
+import matplotlib.pyplot as plt
+import tkinter as tk
+
 from scipy.integrate import odeint
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from tkinter import ttk
 
-
+import sys
 sys.path += ['path/to/SimulationFunctionsOnly','path/to/cme']
 
 import SimulationFunctionsOnly

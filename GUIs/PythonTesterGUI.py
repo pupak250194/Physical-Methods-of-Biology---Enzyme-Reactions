@@ -1,14 +1,14 @@
-import tkinter as tk
-import matplotlib.pyplot as plt
-import sys
 import numpy as np
+import matplotlib.pyplot as plt
+import tkinter as tk
 
-from tkinter import ttk
 from scipy.integrate import odeint
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-
-import SimulationFunctionsOnly # assuming Function file is in the GUI folder, otherwise use sys.path()...
-
+from tkinter import ttk
+ 
+import sys
+sys.path.append(r'path/to/SimulationFunctionsOnly')
+import SimulationFunctionsOnly 
 
 def start_simulation():
 

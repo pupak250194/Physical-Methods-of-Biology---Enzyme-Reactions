@@ -21,17 +21,14 @@
 
 #   conda install -c conda-forge ffmpeg
 
-
-import tkinter as tk
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib import animation, colors
+import tkinter as tk
 
 import sys
 
-from tkinter import ttk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-
+from tkinter import ttk
 
 sys.path += ['path/to/SimulationFunctionsOnly','path/to/cme']
 
