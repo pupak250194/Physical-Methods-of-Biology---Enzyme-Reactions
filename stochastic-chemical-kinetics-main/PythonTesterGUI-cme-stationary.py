@@ -37,7 +37,7 @@ sys.path = ['C:/Users/39333/Desktop/Physical-Methods-of-Biology---Enzyme-Reactio
 
 
 import cme
-import SimulationFunctionsOnly_ES
+import SimulationFunctionsOnly
 
 
 def start_simulation():
@@ -57,7 +57,7 @@ def start_simulation():
     kfd_value = float(entry8cmestat.get())  # kfd value  
     kd_value = float(entry9cmestat.get())  # kfd value 
 
-    simkME, simkMD = SimulationFunctionsOnly_ES.Constants_Switch (ke_value, kbe_value, kfe_value, kbd_value, kfd_value, kd_value)
+    simkME, simkMD = SimulationFunctionsOnly.Constants_Switch (ke_value, kbe_value, kfe_value, kbd_value, kfd_value, kd_value)
     
     # SETTING TIME SPAN
 

@@ -10,7 +10,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 sys.path += ['C:/Users/39333/Desktop/Physical-Methods-of-Biology---Enzyme-Reactions-main/Differential-Eqs','C:/Users/39333/Desktop/Physical-Methods-of-Biology---Enzyme-Reactions-main/stochastic-chemical-kinetics-main/pybind']
 
-import SimulationFunctionsOnly_ES
+import SimulationFunctionsOnly
 import cme
 
 def start_simulation():
@@ -30,7 +30,7 @@ def start_simulation():
     kb_value = float(entry4.get())    # kb value
     kcat_value = float(entry5.get())  # kcat value  
     
-    simkf, simkb, simkcat, simkM = SimulationFunctionsOnly_ES.Constants(kf_value, kb_value, kcat_value)    
+    simkf, simkb, simkcat, simkM = SimulationFunctionsOnly.Constants(kf_value, kb_value, kcat_value)    
     
     # Running simulation
     
@@ -62,7 +62,7 @@ def start_simulation():
     t = (bins[1:] + bins[:-1]) / 2
 
     for s in sim:
-        average, sd = SimulationFunctionsOnly_ES.weighted_ave_sd(t, weights=completion_time_weights[s])
+        average, sd = SimulationFunctionsOnly.weighted_ave_sd(t, weights=completion_time_weights[s])
         print(s, average, '+/-', sd)
 
     fig, ax = plt.subplots(figsize=(5, 4), dpi=100)  # Create a matplotlib figure

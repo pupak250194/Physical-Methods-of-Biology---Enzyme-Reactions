@@ -10,7 +10,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 sys.path += ['C:/Users/39333/Desktop/Physical-Methods-of-Biology---Enzyme-Reactions-main/Differential-Eqs','C:/Users/39333/Desktop/Physical-Methods-of-Biology---Enzyme-Reactions-main/stochastic-chemical-kinetics-main/pybind']
 
-import SimulationFunctionsOnly_ES
+import SimulationFunctionsOnly
 import gillespie
 
 def start_simulation():
@@ -27,7 +27,7 @@ def start_simulation():
     kb_value = float(entry4.get())    # kb value
     kcat_value = float(entry5.get())  # kcat value  
     
-    simkf, simkb, simkcat, simkM = SimulationFunctionsOnly_ES.Constants(kf_value, kb_value, kcat_value)
+    simkf, simkb, simkcat, simkM = SimulationFunctionsOnly.Constants(kf_value, kb_value, kcat_value)
     
     # SETTING TIME SPAN
 
