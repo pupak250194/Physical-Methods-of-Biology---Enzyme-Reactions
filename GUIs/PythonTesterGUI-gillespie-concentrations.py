@@ -37,8 +37,7 @@ from tkinter import ttk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 
-sys.path = ['C:/Users/39333/Desktop/Physical-Methods-of-Biology---Enzyme-Reactions-main/Differential-Eqs','C:/Users/39333/Desktop/Physical-Methods-of-Biology---Enzyme-Reactions-main/stochastic-chemical-kinetics-main/pybind']
-
+sys.path += ['path/to/SimulationFunctionsOnly','path/to/gillespie']
 
 import gillespie
 
@@ -119,9 +118,6 @@ start_button.grid(row=3, columnspan=6)
 
 result_label = ttk.Label(root, text="SIMULATION RESULTS")
 result_label.grid(row=4, columnspan=6)
-
-#output_text = tk.Text(root, height=5, width=40)
-#output_text.grid(row=5, columnspan=6)
 
 root.mainloop()
 

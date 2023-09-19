@@ -7,7 +7,7 @@ from tkinter import ttk
 from scipy.integrate import odeint
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-import SimulationFunctionsOnly
+import SimulationFunctionsOnly # assuming Function file is in the GUI folder, otherwise use sys.path()...
 
 
 def start_simulation():

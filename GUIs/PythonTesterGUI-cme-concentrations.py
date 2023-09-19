@@ -36,8 +36,7 @@ from tkinter import ttk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 
-sys.path = ['C:/Users/39333/Desktop/Physical-Methods-of-Biology---Enzyme-Reactions-main/Differential-Eqs','C:/Users/39333/Desktop/Physical-Methods-of-Biology---Enzyme-Reactions-main/stochastic-chemical-kinetics-main/pybind']
-
+sys.path += ['path/to/SimulationFunctionsOnly','path/to/cme']
 
 import cme
 
@@ -57,14 +56,6 @@ def start_simulation():
     # Running simulation
     
     c = cme.single_substrate(kf=kf_value, kb=kb_value, kcat= kcat_value, ET=initial_E , ST=initial_S)
-    init_p = c.p.copy()
-    
-    def init():
-      c.p = init_p
-      c.t = 0
-      im.set_data(c.p)
-      annot.set_text('Time: 0.000')
-      return im, annot
 
     def animate(i):
       current_t = i*0.002

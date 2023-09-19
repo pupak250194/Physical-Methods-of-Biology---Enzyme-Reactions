@@ -8,7 +8,7 @@ from scipy.integrate import odeint
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 
-sys.path += ['C:/Users/39333/Desktop/Physical-Methods-of-Biology---Enzyme-Reactions-main/Differential-Eqs','C:/Users/39333/Desktop/Physical-Methods-of-Biology---Enzyme-Reactions-main/stochastic-chemical-kinetics-main/pybind']
+sys.path += ['path/to/SimulationFunctionsOnly','path/to/cme']
 
 import SimulationFunctionsOnly
 import cme
@@ -17,12 +17,8 @@ def start_simulation():
 
     # ESTABLISHING INITIAL CONDITIONS AND PARAMETERS
 
-    initial_S = float(entry1.get()) 
-    initial_E = float(entry2.get()) 
-
-    initial_C = 0
-    initial_P = 0 
-    initial_conditions = [initial_C, initial_P]
+    initial_S = int(entry1.get()) 
+    initial_E = int(entry2.get()) 
     
     # Getting the user input from the entry widgets and setting constants
 
@@ -30,7 +26,7 @@ def start_simulation():
     kb_value = float(entry4.get())    # kb value
     kcat_value = float(entry5.get())  # kcat value  
     
-    simkf, simkb, simkcat, simkM = SimulationFunctionsOnly.Constants(kf_value, kb_value, kcat_value)
+    simkM = SimulationFunctionsOnly.MMConstants(kf_value, kb_value, kcat_value)
     
     # SETTING TIME SPAN
 
@@ -43,9 +39,9 @@ def start_simulation():
     sim = ['Exact', 'tQSSA', 'sQSSA']
     c = {}
 
-    c['Exact'] = cme.single_substrate(kf=float(simkf), kb=float(simkb), kcat=float(simkcat), ET=int(initial_E), ST=int(initial_S))
-    c['tQSSA'] = cme.single_substrate_tqssa(kM=float(simkM), kcat=float(simkcat), ET=int(initial_E), ST=int(initial_S))
-    c['sQSSA'] = cme.single_substrate_sqssa(kM=float(simkM), kcat=float(simkcat), ET=int(initial_E), ST=int(initial_S))
+    c['Exact'] = cme.single_substrate(kf=kf_value, kb=kb_value, kcat=kcat_value, ET=initial_E, ST=initial_S)
+    c['tQSSA'] = cme.single_substrate_tqssa(kM=simkM, kcat=kcat_value, ET=initial_E, ST=initial_S)
+    c['sQSSA'] = cme.single_substrate_sqssa(kM=simkM, kcat=kcat_value, ET=initial_E, ST=initial_S)
 
     avePs = {}
     msqPs = {}
@@ -55,10 +51,10 @@ def start_simulation():
     possible_Ps = np.arange(0, initial_S+1)
 
     for s in sim:
-	    prob, ts[s] = c[s].simulate(dt=1e-4, t_final=max_t, n_sampling=100)
-	    marginal_prob = np.sum(prob, axis=marginal_axes[s])
-	    avePs[s] = np.tensordot(marginal_prob, possible_Ps, axes=1)
-	    msqPs[s] = np.tensordot(marginal_prob, possible_Ps**2, axes=1)
+        prob, ts[s] = c[s].simulate(dt=1e-4, t_final=max_t, n_sampling=100)
+        marginal_prob = np.sum(prob, axis=marginal_axes[s])
+        avePs[s] = np.tensordot(marginal_prob, possible_Ps, axes=1)
+        msqPs[s] = np.tensordot(marginal_prob, possible_Ps**2, axes=1)
 	    
     # PLOTTING SIMULATION RESULTS
     
@@ -139,8 +135,5 @@ start_button.grid(row=3, columnspan=6)
 
 result_label = ttk.Label(root, text="SIMULATION RESULTS")
 result_label.grid(row=4, columnspan=6)
-
-#output_text = tk.Text(root, height=5, width=40)
-#output_text.grid(row=5, columnspan=6)
 
 root.mainloop()

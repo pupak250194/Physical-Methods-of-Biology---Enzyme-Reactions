@@ -8,7 +8,7 @@ from scipy.integrate import odeint
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 
-sys.path += ['C:/Users/39333/Desktop/Physical-Methods-of-Biology---Enzyme-Reactions-main/Differential-Eqs','C:/Users/39333/Desktop/Physical-Methods-of-Biology---Enzyme-Reactions-main/stochastic-chemical-kinetics-main/pybind']
+sys.path += ['path/to/SimulationFunctionsOnly','path/to/cme']
 
 import SimulationFunctionsOnly
 import cme
@@ -19,10 +19,6 @@ def start_simulation():
 
     initial_S = int(entry1.get()) 
     initial_E = int(entry2.get()) 
-
-    initial_C = 0
-    initial_P = 0 
-    initial_conditions = [initial_C, initial_P]
     
     # Getting the user input from the entry widgets and setting constants
 
@@ -30,16 +26,16 @@ def start_simulation():
     kb_value = float(entry4.get())    # kb value
     kcat_value = float(entry5.get())  # kcat value  
     
-    simkf, simkb, simkcat, simkM = SimulationFunctionsOnly.Constants(kf_value, kb_value, kcat_value)    
+    simkM = SimulationFunctionsOnly.MMConstants(kf_value, kb_value, kcat_value)    
     
     # Running simulation
     
     sim = ['Exact', 'tQSSA', 'sQSSA']
     c = {}
 
-    c['Exact'] = cme.single_substrate(kf=float(simkf), kb=float(simkb), kcat=float(simkcat), ET=initial_E, ST=initial_S)
-    c['tQSSA'] = cme.single_substrate_tqssa(kM=float(simkM), kcat=float(simkcat), ET=initial_E, ST=initial_S)
-    c['sQSSA'] = cme.single_substrate_sqssa(kM=float(simkM), kcat=float(simkcat), ET=initial_E, ST=initial_S)
+    c['Exact'] = cme.single_substrate(kf=kf_value, kb=kb_value, kcat=kcat_value, ET=initial_E, ST=initial_S)
+    c['tQSSA'] = cme.single_substrate_tqssa(kM=simkM, kcat=kcat_value, ET=initial_E, ST=initial_S)
+    c['sQSSA'] = cme.single_substrate_sqssa(kM=simkM, kcat=kcat_value, ET=initial_E, ST=initial_S)
 
     bins = np.linspace(0, 9, 19)
     
@@ -123,9 +119,6 @@ start_button.grid(row=2, columnspan=6)
 
 result_label = ttk.Label(root, text="SIMULATION RESULTS")
 result_label.grid(row=3, columnspan=6)
-
-#output_text = tk.Text(root, height=5, width=40)
-#output_text.grid(row=4, columnspan=6)
 
 root.mainloop()
 

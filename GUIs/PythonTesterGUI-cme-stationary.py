@@ -33,7 +33,7 @@ from tkinter import ttk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 
-sys.path = ['C:/Users/39333/Desktop/Physical-Methods-of-Biology---Enzyme-Reactions-main/Differential-Eqs','C:/Users/39333/Desktop/Physical-Methods-of-Biology---Enzyme-Reactions-main/stochastic-chemical-kinetics-main/pybind']
+sys.path += ['path/to/SimulationFunctionsOnly','path/to/cme']
 
 
 import cme
@@ -204,9 +204,6 @@ start_button.grid(row=3, columnspan=6)
 
 result_labelcmestat= ttk.Label(rootcmestat, text="SIMULATION RESULTS")
 result_labelcmestat.grid(row=4, columnspan=6)
-
-#output_text = tk.Text(root, height=5, width=40)
-#output_text.grid(row=4, columnspan=6)
 
 rootcmestat.mainloop()
 
