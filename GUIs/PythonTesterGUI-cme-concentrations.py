@@ -81,11 +81,12 @@ def start_simulation():
     plt.ylabel('Enzyme-substrate complex count ($C$)')
 
     def update_animation():
-        try:
-            anim.__next__()
-            root.after(1000 // fps, update_animation)  # Update at the desired FPS
-        except StopIteration:
-            pass
+      try:
+        anim.event_source.stop()  # Stop the animation event source
+        anim.event_source.start(interval=1000 // fps)  # Start with the desired interval
+        root.after(1000 // fps, update_animation)  # Update at the desired FPS
+      except StopIteration:
+        pass
 
     update_animation()
 
