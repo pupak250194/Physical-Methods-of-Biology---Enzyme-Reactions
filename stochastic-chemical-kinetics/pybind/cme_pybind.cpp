@@ -16,10 +16,10 @@
 
 /*
 
-Compilation (MinGW):
+Compilation (MinGW + Anaconda):
 g++ -shared -static-libgcc -static-libstdc++ -std=c++20 -Wall -Wextra -pedantic -O3 -fmax-errors=1 -DMS_WIN64 -fPIC -IC:\ProgramData\anaconda3\Library\include -IC:\ProgramData\Anaconda3\pkgs\python-3.9.12-h6244533_0\include -LC:\ProgramData\Anaconda3\pkgs\python-3.9.12-h6244533_0\libs cme_pybind.cpp -o cme.pyd -lPython39
 
-g++ -shared -static-libgcc -static-libstdc++ -std=c++20 -Wall -Wextra -pedantic -O3 -fmax-errors=1 -DMS_WIN64 -fPIC -IC:\ProgramData\anaconda3\Library\include -IC:\ProgramData\anaconda3\pkgs\python-3.11.5-h966fe2a_0\include -LC:\ProgramData\anaconda3\\pkgs\python-3.11.5-h966fe2a_0\libs cme_pybind.cpp -o cme.pyd -lPython311
+g++ -shared -static-libgcc -static-libstdc++ -std=c++20 -Wall -Wextra -pedantic -O3 -fmax-errors=1 -DMS_WIN64 -fPIC -IC:\ProgramData\anaconda3\Library\include -IC:\ProgramData\anaconda3\pkgs\python-3.11.5-h966fe2a_0\include -LC:\ProgramData\anaconda3\pkgs\python-3.11.5-h966fe2a_0\libs cme_pybind.cpp -o cme.pyd -lPython311
 */
 
 #include <optional>

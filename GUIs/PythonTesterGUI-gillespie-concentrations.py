@@ -19,7 +19,7 @@
 
 # have mmpeg installed to run this script. Using conda:
 
-#   conda install -c conda-forge ffmpeg
+#   conda install ffmpeg
 
 
 import matplotlib
