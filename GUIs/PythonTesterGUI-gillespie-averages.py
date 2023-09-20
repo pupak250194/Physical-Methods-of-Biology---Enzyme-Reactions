@@ -6,45 +6,39 @@ from tkinter import ttk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 import sys
-sys.path += ['path/to/SimulationFunctionsOnly','path/to/gillespie']
+sys.path += ['..', '../stochastic-chemical-kinetics/pybind']
 
 import SimulationFunctionsOnly
 import gillespie
 
-def start_simulation():
-
+def run_simulation():
+    """Run the simulation and plot the results."""
     # ESTABLISHING INITIAL CONDITIONS AND PARAMETERS
 
-    initial_S = int(entry1.get()) 
-    initial_E = int(entry2.get()) 
-
- 
+    ET = int(input_entries[0].get()) 
+    ST = int(input_entries[1].get()) 
+    
     # Getting the user input from the entry widgets and setting constants
 
-    kf_value = float(entry3.get())    # kf value
-    kb_value = float(entry4.get())    # kb value
-    kcat_value = float(entry5.get())  # kcat value  
-    
-    simkM = SimulationFunctionsOnly.MMConstants(kf_value, kb_value, kcat_value)
-    
-    # SETTING TIME SPAN
+    kf = float(input_entries[2].get())    # kf value
+    kb = float(input_entries[3].get())    # kb value
+    kcat = float(input_entries[4].get())  # kcat value
 
-    # Getting the user input for simulation time
-    simulation_time = float(entry6.get())  # Simulation time
-    
+    kM = SimulationFunctionsOnly.MMConstant(kf, kb, kcat)
+
+    max_t = int(entry_time.get())
     
     # Running simulation
     
     sim = ['Exact', 'tQSSA', 'sQSSA']
     g = {}
 
-    g['Exact'] = gillespie.single_substrate(kf=kf_value, kb=kb_value, kcat=kcat_value, ET=initial_E, ST=initial_S)
-    g['tQSSA'] = gillespie.single_substrate_tqssa(kM=simkM, kcat=kcat_value, ET=initial_E, ST=initial_S)
-    g['sQSSA'] = gillespie.single_substrate_sqssa(kM=simkM, kcat=kcat_value, ET=initial_E, ST=initial_S)
+    g['Exact'] = gillespie.single_substrate(kf=kf, kb=kb, kcat=kcat, ET=ET, ST=ST)
+    g['tQSSA'] = gillespie.single_substrate_tqssa(kM=kM, kcat=kcat, ET=ET, ST=ST)
+    g['sQSSA'] = gillespie.single_substrate_sqssa(kM=kM, kcat=kcat, ET=ET, ST=ST)
 
     avePs = {}
     msqPs = {}
-    max_t = simulation_time
     
     hists = {'Exact': [], 'tQSSA': [], 'sQSSA': []}
     n_simulations = 5000
@@ -75,12 +69,10 @@ def start_simulation():
     
     t = (bins[1:] + bins[:-1]) / 2
 
-    # Creating a new figure for the plots
-    fig, ax = plt.subplots(figsize=(8, 6))
+    ax.clear()
 
     for s in sim:
         error = np.sqrt(np.maximum(msqPs[s] - avePs[s]**2, 0))
-        t = np.linspace(0, max_t, len(avePs[s]))  # Ensure t has the correct dimension
         ax.plot(t, avePs[s], label=s)
         ax.fill_between(t, 0, error, alpha=.3)
 
@@ -90,64 +82,41 @@ def start_simulation():
     ax.legend()
 
     # Embedding the Matplotlib figure in  Tkinter window
-    canvas = FigureCanvasTkAgg(fig, master=root)
-    canvas.get_tk_widget().grid(row=5, column=0, columnspan=6)
+
+    canvas.draw()
     
-    print(f"Running simulation with parameters: Initial S={initial_S}, Initial E={initial_E}, kf={kf_value}, kb={kb_value}, kcat={kcat_value}")    
-    
+    print(f"Running simulation with parameters: ST={ST}, ET={ET}, kf={kf}, kb={kb}, kcat={kcat}")    
+
 
 root = tk.Tk()
 root.title("Kinetic Reaction Simulator")
 
-# Initial C
-label1 = ttk.Label(root, text="Initial S:")
-label1.grid(row=0, column=0)
+fig, ax = plt.subplots()
+canvas = FigureCanvasTkAgg(fig, master=root)
+canvas.get_tk_widget().grid(row=5, column=0, columnspan=6)
 
-entry1 = ttk.Entry(root)
-entry1.grid(row=0, column=1)
+# Create and layout input widgets
+input_labels = ['ET value:', 'ST value:', 'kf value:', 'kb value:', 'kcat value:']
+input_entries = []
+default_entries = ['10', '9', '10', '9', '1']
 
-# Initial P
-label2 = ttk.Label(root, text="Initial E:")
-label2.grid(row=0, column=2)
+for i, label_text in enumerate(input_labels):
+    ttk.Label(root, text=label_text).grid(row=0, column=i)
+    entry = ttk.Entry(root)
+    entry.insert(0, default_entries[i])
+    entry.grid(row=1, column=i)
+    input_entries.append(entry)
 
-entry2 = ttk.Entry(root)
-entry2.grid(row=0, column=3)
+# Label for Max Time
+ttk.Label(root, text='Max Time:').grid(row=2, column=0)
+entry_time = ttk.Entry(root)
+entry_time.insert(0, '9')
+entry_time.grid(row=2, column=1)
 
-# kf value
-label3 = ttk.Label(root, text="kf value:")
-label3.grid(row=1, column=0)
-
-entry3 = ttk.Entry(root)
-entry3.grid(row=1, column=1)
-
-# kb value
-label4 = ttk.Label(root, text="kb value:")
-label4.grid(row=1, column=2)
-
-entry4 = ttk.Entry(root)
-entry4.grid(row=1, column=3)
-
-# kcat value
-label5 = ttk.Label(root, text="kcat value:")
-label5.grid(row=1, column=4)
-
-entry5 = ttk.Entry(root)
-entry5.grid(row=1, column=5)
-
-# Label for Simulation Time
-label6 = ttk.Label(root, text="Simulation Time:")
-label6.grid(row=2, column=0)
-
-entry6 = ttk.Entry(root)
-entry6.grid(row=2, column=1)
-
-start_button = ttk.Button(root, text="Start Simulation", command=start_simulation)
+start_button = ttk.Button(root, text='Run simulation', command=run_simulation)
 start_button.grid(row=3, columnspan=6)
 
 result_label = ttk.Label(root, text="SIMULATION RESULTS")
 result_label.grid(row=4, columnspan=6)
-
-#output_text = tk.Text(root, height=5, width=40)
-#output_text.grid(row=5, columnspan=6)
 
 root.mainloop()

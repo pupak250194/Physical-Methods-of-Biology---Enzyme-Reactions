@@ -116,7 +116,7 @@ canvas.get_tk_widget().grid(row=9, column=0, columnspan=6)
 # Create and layout input widgets
 input_labels = ['ET value:', 'DT value:', 'ST value:', 'kfe value:', 'kbe value:', 'ke value:', 'kfd value:', 'kbd value:', 'kd value:']
 input_entries = []
-default_entries = ['100', '100', '100', '8.7', '1.3', '1', '8.7', '1.3', '1']
+default_entries = ['100', '100', '100', '10', '8.3', '1.7', '10', '8.3', '1.7']
 
 for i, label_text in enumerate(input_labels):
     ttk.Label(root, text=label_text).grid(row=(i//3)*2, column=i%3)

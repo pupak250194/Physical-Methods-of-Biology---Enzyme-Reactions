@@ -28,7 +28,7 @@ def run_simulation():
 
     kM = SimulationFunctionsOnly.MMConstant(kf, kb, kcat)
 
-    max_time = float(entry_time.get())  # Simulation time
+    max_t = float(entry_time.get())  # Simulation time
     
     # Running simulation
     sim = ['Exact', 'tQSSA', 'sQSSA']
@@ -38,7 +38,7 @@ def run_simulation():
     c['tQSSA'] = cme.single_substrate_tqssa(kM=kM, kcat=kcat, ET=ET, ST=ST)
     c['sQSSA'] = cme.single_substrate_sqssa(kM=kM, kcat=kcat, ET=ET, ST=ST)
 
-    bins = np.linspace(0, max_time, 19)
+    bins = np.linspace(0, max_t, 19)
     
     completion_time_weights = {
         'Exact': np.empty_like(bins),
