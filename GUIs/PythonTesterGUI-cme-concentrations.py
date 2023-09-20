@@ -2,6 +2,29 @@
 #   conda install -c conda-forge ffmpeg
 
 
+'''
+    Stochastic enzyme kinetics: CME python example
+    Copyright (C) 2023 Alessandro Lo Cuoco (alessandro.locuoco@gmail.com)
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+'''
+
+# have mmpeg installed to run this script. Using conda:
+
+#   conda install -c conda-forge ffmpeg
+
+
 import tkinter as tk
 import numpy as np
 
@@ -10,13 +33,14 @@ matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 from matplotlib import animation, colors
 
-
+import sys
 
 from tkinter import ttk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-import sys
-sys.path = ('path\\to\\cme')
+
+sys.path = ['C:/Users/39333/Desktop/Physical-Methods-of-Biology---Enzyme-Reactions-main/GUIs','C:/Users/39333/Desktop/Physical-Methods-of-Biology---Enzyme-Reactions-main/stochastic-chemical-kinetics-main/pybind']
+
 
 import cme
 
@@ -54,15 +78,6 @@ def start_simulation():
       anim.event_source.stop()  # Stop the animation event source
       print("Simulation stopped manually.")
       
-    
-    def update_animation():
-      try:
-        anim.event_source.stop()  # Stop the animation event source
-        anim.event_source.start(interval=1000 // fps)  # Start with the desired interval
-        root.after(1000 // fps, update_animation)  # Update at the desired FPS
-      except StopIteration:
-        pass
-
     # Running simulation
     
     c = cme.single_substrate(kf=kf_value, kb=kb_value, kcat=kcat_value, ET=initial_E, ST=initial_S)
@@ -76,10 +91,6 @@ def start_simulation():
   
     fps = 30
     anim = animation.FuncAnimation(fig, animate, init_func=init, frames=5000, interval=1000/fps, blit=False)
-
-    if len(sys.argv) > 1:
-      if sys.argv[1] == 's' or sys.argv[1] == 'save':
-        anim.save('cme_example.mp4', fps=fps, extra_args=['-vcodec', 'libx264'])
 
     annot = ax.annotate('Time: 0.000', (0.09, 0.92), xycoords='figure fraction')
 
@@ -95,8 +106,6 @@ def start_simulation():
     
     plt.xlabel('Product count ($P$)')
     plt.ylabel('Enzyme-substrate complex count ($C$)')
-
-    update_animation()
 
     if len(sys.argv) > 1:
 	      if sys.argv[1] == 's' or sys.argv[1] == 'save':
@@ -148,11 +157,4 @@ start_button.grid(row=3, columnspan=6)
 result_label = ttk.Label(root, text="SIMULATION RESULTS")
 result_label.grid(row=4, columnspan=6)
 
-#output_text = tk.Text(root, height=5, width=40)
-#output_text.grid(row=5, columnspan=6)
-
 root.mainloop()
-
-
-
-
