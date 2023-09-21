@@ -39,7 +39,7 @@ from tkinter import ttk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 
-sys.path = ['C:/Users/39333/Desktop/Physical-Methods-of-Biology---Enzyme-Reactions-main/GUIs','C:/Users/39333/Desktop/Physical-Methods-of-Biology---Enzyme-Reactions-main/stochastic-chemical-kinetics-main/pybind']
+sys.path = ['C:/Users/39333/Desktop/Physical-Methods-of-Biology---Enzyme-Reactions-main/GUIs','C:/Users/39333/Desktop/GitHub/Physical-Methods-of-Biology---Enzyme-Reactions/stochastic-chemical-kinetics-main/pybind']
 
 
 import cme
