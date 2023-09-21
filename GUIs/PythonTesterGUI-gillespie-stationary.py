@@ -30,55 +30,54 @@ from tkinter import ttk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 import sys
-sys.path += ['path/to/SimulationFunctionsOnly','path/to/gillespie']
+sys.path += ['..', '../stochastic-chemical-kinetics/pybind']
 
-
-import gillespie
 import SimulationFunctionsOnly
+import gillespie
 
 
-def start_simulation():
-
+def run_simulation():
+    """Run the simulation and plot the results."""
     # ESTABLISHING INITIAL CONDITIONS AND PARAMETERS
 
-    initial_S = int(entry1cmestat.get()) 
-    initial_E = int(entry2cmestat.get()) 
-    initial_D = int(entry3cmestat.get()) 
+    ET = int(input_entries[0].get())
+    DT = int(input_entries[1].get())
+    ST = int(input_entries[2].get())
 
     # Getting the user input from the entry widgets and setting constants
 
-    ke_value = float(entry4cmestat.get())    # ke value
-    kbe_value = float(entry5cmestat.get())    # kbe value
-    kfe_value = float(entry6cmestat.get())  # kfe value 
-    kbd_value = float(entry7cmestat.get())  # kbd value  
-    kfd_value = float(entry8cmestat.get())  # kfd value  
-    kd_value = float(entry9cmestat.get())  # kfd value 
+    kfe = float(input_entries[3].get())  # kfe value
+    kbe = float(input_entries[4].get())  # kbe value
+    ke  = float(input_entries[5].get())   # ke value
+    kfd = float(input_entries[6].get())  # kfd value
+    kbd = float(input_entries[7].get())  # kbd value
+    kd  = float(input_entries[8].get())   # kd value
 
-    simkME, simkMD = SimulationFunctionsOnly.Constants_Switch (ke_value, kbe_value, kfe_value, kbd_value, kfd_value, kd_value)
-    
+    kME, kMD = SimulationFunctionsOnly.Constants_Switch(kfe, kbe, ke, kfd, kbd, kd)
+
     # SETTING TIME SPAN
 
     # Getting the user input for simulation time
-    simulation_time = float(entry10cmestat.get())  # Simulation time
-    
+    simulation_time = float(entry_time.get())  # Simulation time
+
     # not using exact formulation due to very long computational time
     sim = ['Exact', 'tQSSA', 'sQSSA']
     g = {}
 
-    g['Exact'] = gillespie.goldbeter_koshland(kfe=kfe_value, kbe=kbe_value, ke=ke_value, kfd=kfd_value, kbd=kbd_value, kd=kd_value, ET=initial_E, DT=initial_D, ST=initial_S)
-    g['tQSSA'] = gillespie.goldbeter_koshland_tqssa(kME=simkME, ke=ke_value, kMD=simkMD, kd=kd_value, ET=initial_E, DT=initial_D, ST=initial_S)
-    g['sQSSA'] = gillespie.goldbeter_koshland_sqssa(kME=simkME, ke=ke_value, kMD=simkMD, kd=kd_value, ET=initial_E, DT=initial_D, ST=initial_S)
+    g['Exact'] = gillespie.goldbeter_koshland(kfe=kfe, kbe=kbe, ke=ke, kfd=kfd, kbd=kbd, kd=kd, ET=ET, DT=DT, ST=ST)
+    g['tQSSA'] = gillespie.goldbeter_koshland_tqssa(kME=kME, ke=ke, kMD=kMD, kd=kd, ET=ET, DT=DT, ST=ST)
+    g['sQSSA'] = gillespie.goldbeter_koshland_sqssa(kME=kME, ke=ke, kMD=kMD, kd=kd, ET=ET, DT=DT, ST=ST)
 
     SP_hats = {}
-    init_conditions = {'Exact': [initial_S//2, 0, 0], 'tQSSA': [initial_S//2], 'sQSSA': [initial_S//2]}
+    init_conditions = {'Exact': [ST//2, 0, 0], 'tQSSA': [ST//2], 'sQSSA': [ST//2]}
     max_t = simulation_time
-    
+
     tracked_species = {
-	'Exact': np.array([g['Exact'].species.SP, g['Exact'].species.CP], dtype=int),
-	'tQSSA': np.array([g['tQSSA'].species.SP_hat], dtype=int),
-	'sQSSA': np.array([g['sQSSA'].species.SP], dtype=int)
-     }
-    
+        'Exact': np.array([g['Exact'].species.SP, g['Exact'].species.CP], dtype=int),
+        'tQSSA': np.array([g['tQSSA'].species.SP_hat], dtype=int),
+        'sQSSA': np.array([g['sQSSA'].species.SP], dtype=int)
+    }
+
     for s in sim:
         g[s].x = init_conditions[s]
         g[s].t = 0
@@ -88,113 +87,54 @@ def start_simulation():
     for s in sim:
         print(s, np.mean(SP_hats[s]), '+/-', np.std(SP_hats[s]))
 
-    bins = np.linspace(0, initial_S, 21)
-    
+    bins = np.linspace(0, ST, 21)
+
     # Plots
 
-    # Create a new figure for the plot
-    
-    fig = plt.figure()
-    
-    # Add your histograms
-    
-    plt.hist(SP_hats['Exact'], bins, label='Exact', density=True, color='blue', histtype='step', fill=False)
-    plt.hist(SP_hats['tQSSA'], bins, label='tQSSA', density=True, color='red', alpha=.6)
-    plt.hist(SP_hats['sQSSA'], bins, label='sQSSA', density=True, color='gray', alpha=.3)
+    ax.clear()
 
-    plt.xlabel('Steady-state phosphorylated substrate count ($\hat{S}_P$)')
-    plt.ylabel('Probability density')
-    plt.legend()
-    
-    # Create the FigureCanvasTkAgg widget
-    canvas = FigureCanvasTkAgg(fig, master=rootcmestat)
+    # Add your histograms
+
+    ax.hist(SP_hats['Exact'], bins, label='Exact', density=True, color='blue', histtype='step', fill=False)
+    ax.hist(SP_hats['tQSSA'], bins, label='tQSSA', density=True, color='red', alpha=.6)
+    ax.hist(SP_hats['sQSSA'], bins, label='sQSSA', density=True, color='gray', alpha=.3)
+
+    ax.set_xlabel('Steady-state phosphorylated substrate count ($\hat{S}_P$)')
+    ax.set_ylabel('Probability density')
+    ax.legend()
+
     canvas.draw()
 
-    # Add the widget to your GUI
-    canvas.get_tk_widget().grid(row=5, column=0, columnspan=6)    
 
-    # Replace the print statement with your simulation code
-    #print(f"Running simulation with parameters: Initial S={initial_S}, Initial E={initial_E}, kf={kf_value}, kb={kb_value}, kcat={kcat_value}")
+root = tk.Tk()
+root.title('Kinetic Reaction Simulator - cme stat')
 
+fig, ax = plt.subplots()
+canvas = FigureCanvasTkAgg(fig, master=root)
+canvas.get_tk_widget().grid(row=9, column=0, columnspan=6)
 
-rootcmestat = tk.Tk()
-rootcmestat.title("Kinetic Reaction Simulator - cme stat")
+# Create and layout input widgets
+input_labels = ['ET value:', 'DT value:', 'ST value:', 'kfe value:', 'kbe value:', 'ke value:', 'kfd value:', 'kbd value:', 'kd value:']
+input_entries = []
+default_entries = ['100', '100', '100', '10', '8.3', '1.7', '10', '8.3', '1.7']
 
-# Initial S
-label1cmestat = ttk.Label(rootcmestat, text="Initial S:")
-label1cmestat.grid(row=0, column=0)
-
-entry1cmestat = ttk.Entry(rootcmestat)
-entry1cmestat.grid(row=0, column=1)
-
-# Initial E
-label2cmestat = ttk.Label(rootcmestat, text="Initial E:")
-label2cmestat.grid(row=0, column=2)
-
-entry2cmestat = ttk.Entry(rootcmestat)
-entry2cmestat.grid(row=0, column=3)
-
-# Initial D
-label3cmestat = ttk.Label(rootcmestat, text="Initial D:")
-label3cmestat.grid(row=0, column=4)
-
-entry3cmestat = ttk.Entry(rootcmestat)
-entry3cmestat.grid(row=0, column=5)
-
-# ke value
-label4cmestat = ttk.Label(rootcmestat, text="ke value:")
-label4cmestat.grid(row=1, column=0)
-
-entry4cmestat = ttk.Entry(rootcmestat)
-entry4cmestat.grid(row=1, column=1)
-
-# kbe value
-label5cmestat = ttk.Label(rootcmestat, text="kbe value:")
-label5cmestat.grid(row=1, column=2)
-
-entry5cmestat = ttk.Entry(rootcmestat)
-entry5cmestat.grid(row=1, column=3)
-
-# kfe value
-label6cmestat = ttk.Label(rootcmestat, text="kfe value:")
-label6cmestat.grid(row=1, column=4)
-
-entry6cmestat = ttk.Entry(rootcmestat)
-entry6cmestat.grid(row=1, column=5)
-
-# kbd value
-label7cmestat = ttk.Label(rootcmestat, text="kbd value:")
-label7cmestat.grid(row=2, column=0)
-
-entry7cmestat = ttk.Entry(rootcmestat)
-entry7cmestat.grid(row=2, column=1)
-
-# kfd value
-label8cmestat = ttk.Label(rootcmestat, text="kfd value:")
-label8cmestat.grid(row=2, column=2)
-
-entry8cmestat = ttk.Entry(rootcmestat)
-entry8cmestat.grid(row=2, column=3)
-
-# kfd value
-label9cmestat = ttk.Label(rootcmestat, text="kd value:")
-label9cmestat.grid(row=2, column=4)
-
-entry9cmestat = ttk.Entry(rootcmestat)
-entry9cmestat.grid(row=2, column=5)
-
+for i, label_text in enumerate(input_labels):
+    ttk.Label(root, text=label_text).grid(row=(i//3)*2, column=i%3)
+    entry = ttk.Entry(root)
+    entry.insert(0, default_entries[i])
+    entry.grid(row=(i//3)*2+1, column=i%3)
+    input_entries.append(entry)
 
 # Label for Simulation Time
-label10cmestat = ttk.Label(rootcmestat, text="Simulation Time:")
-label10cmestat.grid(row=3, column=0)
+ttk.Label(root, text='Simulation Time:').grid(row=6, column=0)
+entry_time = ttk.Entry(root)
+entry_time.insert(0, '10000')
+entry_time.grid(row=6, column=1)
 
-entry10cmestat = ttk.Entry(rootcmestat)
-entry10cmestat.grid(row=3, column=1)
+start_button = ttk.Button(root, text='Run simulation', command=run_simulation)
+start_button.grid(row=7, columnspan=6)
 
-start_button = ttk.Button(rootcmestat, text="Start Simulation", command=start_simulation)
-start_button.grid(row=3, columnspan=6)
+result_labelcmestat= ttk.Label(root, text='SIMULATION RESULTS')
+result_labelcmestat.grid(row=8, columnspan=6)
 
-result_labelcmestat= ttk.Label(rootcmestat, text="SIMULATION RESULTS")
-result_labelcmestat.grid(row=4, columnspan=6)
-
-rootcmestat.mainloop()
+root.mainloop()

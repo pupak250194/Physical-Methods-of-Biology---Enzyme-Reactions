@@ -7,7 +7,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from tkinter import ttk
  
 import sys
-sys.path.append(r'path/to/SimulationFunctionsOnly')
+sys.path.append('..')
 import SimulationFunctionsOnly 
 
 def start_simulation():

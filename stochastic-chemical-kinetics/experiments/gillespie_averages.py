@@ -39,7 +39,7 @@ g['Exact'] = gillespie.single_substrate(kf=kf, kb=kb, kcat=kcat, ET=ET, ST=ST)
 g['tQSSA'] = gillespie.single_substrate_tqssa(kM=kM, kcat=kcat, ET=ET, ST=ST)
 g['sQSSA'] = gillespie.single_substrate_sqssa(kM=kM, kcat=kcat, ET=ET, ST=ST)
 
-hists = {'Exact': [], 'tQSSA': [], 'sQSSA': []}
+hists = {s: [] for s in sim}
 n_simulations = 5000
 init_conditions = {'Exact': [0, 0], 'tQSSA': [0], 'sQSSA': [0]}
 max_t = 9
