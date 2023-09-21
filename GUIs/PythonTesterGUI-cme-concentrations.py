@@ -1,7 +1,3 @@
-
-#   conda install -c conda-forge ffmpeg
-
-
 '''
     Stochastic enzyme kinetics: CME python example
     Copyright (C) 2023 Alessandro Lo Cuoco (alessandro.locuoco@gmail.com)
@@ -22,139 +18,129 @@
 
 # have mmpeg installed to run this script. Using conda:
 
-#   conda install -c conda-forge ffmpeg
-
+#   conda install ffmpeg
 
 import tkinter as tk
 import numpy as np
-
-import matplotlib
-matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib import animation, colors
 
+from tkinter import ttk
 import sys
 
-from tkinter import ttk
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-
-
-sys.path = ['C:/Users/39333/Desktop/Physical-Methods-of-Biology---Enzyme-Reactions-main/GUIs','C:/Users/39333/Desktop/Physical-Methods-of-Biology---Enzyme-Reactions-main/stochastic-chemical-kinetics-main/pybind']
-
-
+sys.path.append('../stochastic-chemical-kinetics/pybind')
 import cme
 
+# have mmpeg installed to run this script. Using conda:
+
+#   conda install ffmpeg
+
+# Create the initial tick labels (assuming a 10x10 grid)
+init_x_max = 10
+init_y_max = 10
+x_ticks = np.arange(0, init_x_max, 1)
+y_ticks = np.arange(0, init_y_max, 1)
+x_tick_labels = [str(int(label)) for label in x_ticks]
+y_tick_labels = [str(int(label)) for label in y_ticks]
+
+def initialize_simulation():
+    ET = int(input_entries[0].get())
+    ST = int(input_entries[1].get())
+    kf = float(input_entries[2].get())
+    kb = float(input_entries[3].get())
+    kcat = float(input_entries[4].get())
+
+    c = cme.single_substrate(kf=kf, kb=kb, kcat=kcat, ET=ET, ST=ST)
+    
+    return c
+
+def init_animation():
+    c = initialize_simulation()
+    im.set_data(c.p)
+    annot.set_text('Time: 0.000')
+    return im, annot
+
+def animate_frame(i, c):
+    current_t = i * 0.002
+    c.simulate(dt=1e-4, t_final=current_t, noreturn=True)
+    im.set_data(c.p)
+    annot.set_text(f'Time: {current_t:.3f}')
+
+    return im, annot
+
 def start_simulation():
+    global anim  # Declare anim as a global variable
+    if anim:
+        anim.event_source.stop()  # Stop the previous animation if it exists
+    
+    c = initialize_simulation()
+    
+    # Get the current data shape
+    x_max, y_max = c.p.shape[1], c.p.shape[0]
+    
+    # Calculate tick positions for the x-axis and set the labels
+    x_tick_positions = np.arange(0, x_max, 1)
+    x_tick_labels = [str(int(label)) for label in x_tick_positions]
+    x_tick_positions = (x_tick_positions + .5) * init_x_max / x_max - .5
+    ax.set_xticks(x_tick_positions)
+    ax.set_xticklabels(x_tick_labels)
+    
+    # Calculate tick positions for the y-axis and set the labels
+    y_tick_positions = np.arange(0, y_max, 1)
+    y_tick_labels = [str(int(label)) for label in y_tick_positions]
+    y_tick_positions = (y_tick_positions + .5) * init_y_max / y_max - .5
+    ax.set_yticks(y_tick_positions)
+    ax.set_yticklabels(y_tick_labels)
 
-    # ESTABLISHING INITIAL CONDITIONS AND PARAMETERS...
-
-    initial_S = int(entry1.get()) 
-    initial_E = int(entry2.get()) 
-    
-    # Getting the user input from the entry widgets and setting constants...
-
-    kf_value = float(entry3.get())    # kf value
-    kb_value = float(entry4.get())    # kb value
-    kcat_value = float(entry5.get())  # kcat value 
-    
-    # Defining functions to be called by simulation...
-    
-    
-    def init():
-      c.p = init_p
-      c.t = 0
-      im.set_data(c.p)
-      annot.set_text('Time: 0.000')
-      return im, annot
-
-    def animate(i):
-      current_t = i*0.002
-      c.simulate(dt=1e-4, t_final=current_t, noreturn=True)
-      im.set_data(c.p)
-      annot.set_text('Time: {:.3f}'.format(current_t))
-      return im, annot
-    
-    def stop_simulation(): 
-      anim.event_source.stop()  # Stop the animation event source
-      print("Simulation stopped manually.")
-      
-    # Running simulation
-    
-    c = cme.single_substrate(kf=kf_value, kb=kb_value, kcat=kcat_value, ET=initial_E, ST=initial_S)
-    init_p = c.p.copy()
-
-    fig = plt.figure()
-    ax = plt.axes()
-    im = ax.imshow(c.p, norm=colors.SymLogNorm(1e-20), origin='lower')
-    plt.colorbar(im, ax=ax, label='Probability')
-    im.set_clim(1e-10, 1)
-  
     fps = 30
-    anim = animation.FuncAnimation(fig, animate, init_func=init, frames=5000, interval=1000/fps, blit=False)
-
-    annot = ax.annotate('Time: 0.000', (0.09, 0.92), xycoords='figure fraction')
-
-    # Embedding the animation in the Tkinter window...
-  
-    canvas = FigureCanvasTkAgg(fig, master=root)
+    anim = animation.FuncAnimation(fig, animate_frame, fargs=(c,), init_func=init_animation, interval=1000/fps, blit=False, cache_frame_data=False)
     canvas.draw()
-    canvas.get_tk_widget().grid(row=5, column=0, columnspan=6)
-    
-    # Add this line after creating the canvas
-    stop_button = ttk.Button(root, text="Stop Simulation", command=stop_simulation)
-    stop_button.grid(row=6, column=0, columnspan=6)
-    
-    plt.xlabel('Product count ($P$)')
-    plt.ylabel('Enzyme-substrate complex count ($C$)')
 
-    if len(sys.argv) > 1:
-	      if sys.argv[1] == 's' or sys.argv[1] == 'save':
-		        anim.save('cme_example.mp4', fps=fps, extra_args=['-vcodec', 'libx264'])
-          
-    
+def stop_simulation():
+    if anim:
+        anim.event_source.stop()
+        print('Simulation stopped manually.')
 
 root = tk.Tk()
-root.title("Kinetic Reaction Simulator")
+root.title('Kinetic Reaction Simulator')
 
-# Initial C
-label1 = ttk.Label(root, text="Initial S:")
-label1.grid(row=0, column=0)
+fig, ax = plt.subplots()
+im = ax.imshow(np.zeros(shape=(10, 10)), norm=colors.SymLogNorm(1e-20), origin='lower')
+plt.colorbar(im, ax=ax, label='Probability')
+im.set_clim(1e-10, 1)
+annot = ax.annotate('Time: 0.000', (0.09, 0.92), xycoords='figure fraction')
+plt.xlabel('Product count ($P$)')
+plt.ylabel('Enzyme-substrate complex count ($C$)')
 
-entry1 = ttk.Entry(root)
-entry1.grid(row=0, column=1)
+anim = None
 
-# Initial P
-label2 = ttk.Label(root, text="Initial E:")
-label2.grid(row=0, column=2)
+canvas = FigureCanvasTkAgg(fig, master=root)
+canvas.get_tk_widget().grid(row=5, column=0, columnspan=6)
 
-entry2 = ttk.Entry(root)
-entry2.grid(row=0, column=3)
+# Set initial tick labels
+ax.set_xticks(x_ticks)
+ax.set_yticks(y_ticks)
+ax.set_xticklabels(x_tick_labels)
+ax.set_yticklabels(y_tick_labels)
 
-# kf value
-label3 = ttk.Label(root, text="kf value:")
-label3.grid(row=1, column=0)
+# Create and layout input widgets
+input_labels = ['ET value:', 'ST value:', 'kf value:', 'kb value:', 'kcat value:']
+input_entries = []
+default_entries = ['10', '9', '10', '9', '1']
 
-entry3 = ttk.Entry(root)
-entry3.grid(row=1, column=1)
+for i, label_text in enumerate(input_labels):
+    ttk.Label(root, text=label_text).grid(row=0, column=i)
+    entry = ttk.Entry(root)
+    entry.insert(0, default_entries[i])
+    entry.grid(row=1, column=i)
+    input_entries.append(entry)
 
-# kb value
-label4 = ttk.Label(root, text="kb value:")
-label4.grid(row=1, column=2)
-
-entry4 = ttk.Entry(root)
-entry4.grid(row=1, column=3)
-
-# kcat value
-label5 = ttk.Label(root, text="kcat value:")
-label5.grid(row=1, column=4)
-
-entry5 = ttk.Entry(root)
-entry5.grid(row=1, column=5)
-
-start_button = ttk.Button(root, text="Start Simulation", command=start_simulation)
+# Start and stop buttons
+start_button = ttk.Button(root, text='Start Simulation', command=start_simulation)
 start_button.grid(row=3, columnspan=6)
 
-result_label = ttk.Label(root, text="SIMULATION RESULTS")
-result_label.grid(row=4, columnspan=6)
+stop_button = ttk.Button(root, text='Stop Simulation', command=stop_simulation)
+stop_button.grid(row=6, column=0, columnspan=6)
 
 root.mainloop()

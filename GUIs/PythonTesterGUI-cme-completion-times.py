@@ -1,54 +1,55 @@
-
 import numpy as np
 import matplotlib.pyplot as plt
 import tkinter as tk
-
 from scipy.integrate import odeint
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from tkinter import ttk
-
 import sys
-sys.path += ['path/to/SimulationFunctionsOnly','path/to/cme']
 
+sys.path += ['..', '../stochastic-chemical-kinetics/pybind']
 import SimulationFunctionsOnly
 import cme
 
-def start_simulation():
+def weighted_average_and_std(arr, weights):
+    """Calculate weighted average and standard deviation."""
+    average = np.average(arr, weights=weights)
+    variance = np.average((arr - average) ** 2, weights=weights)
+    return average, np.sqrt(variance)
 
+def run_simulation():
+    """Run the simulation and plot the results."""
+    global canvas
     # ESTABLISHING INITIAL CONDITIONS AND PARAMETERS
+    ET = int(input_entries[0].get())
+    ST = int(input_entries[1].get())
+    kf = float(input_entries[2].get())
+    kb = float(input_entries[3].get())
+    kcat = float(input_entries[4].get())
 
-    initial_S = int(entry1.get()) 
-    initial_E = int(entry2.get()) 
-    
-    # Getting the user input from the entry widgets and setting constants
+    kM = SimulationFunctionsOnly.MMConstant(kf, kb, kcat)
 
-    kf_value = float(entry3.get())    # kf value
-    kb_value = float(entry4.get())    # kb value
-    kcat_value = float(entry5.get())  # kcat value  
-    
-    simkM = SimulationFunctionsOnly.MMConstants(kf_value, kb_value, kcat_value)    
+    max_t = float(entry_time.get())  # Simulation time
     
     # Running simulation
-    
     sim = ['Exact', 'tQSSA', 'sQSSA']
     c = {}
 
-    c['Exact'] = cme.single_substrate(kf=kf_value, kb=kb_value, kcat=kcat_value, ET=initial_E, ST=initial_S)
-    c['tQSSA'] = cme.single_substrate_tqssa(kM=simkM, kcat=kcat_value, ET=initial_E, ST=initial_S)
-    c['sQSSA'] = cme.single_substrate_sqssa(kM=simkM, kcat=kcat_value, ET=initial_E, ST=initial_S)
+    c['Exact'] = cme.single_substrate(kf=kf, kb=kb, kcat=kcat, ET=ET, ST=ST)
+    c['tQSSA'] = cme.single_substrate_tqssa(kM=kM, kcat=kcat, ET=ET, ST=ST)
+    c['sQSSA'] = cme.single_substrate_sqssa(kM=kM, kcat=kcat, ET=ET, ST=ST)
 
-    bins = np.linspace(0, 9, 19)
+    bins = np.linspace(0, max_t, 19)
     
     completion_time_weights = {
-	'Exact': np.empty_like(bins),
-	'tQSSA': np.empty_like(bins),
-	'sQSSA': np.empty_like(bins)
+        'Exact': np.empty_like(bins),
+        'tQSSA': np.empty_like(bins),
+        'sQSSA': np.empty_like(bins)
     }
     
-    completion_states = {'Exact': (0, initial_S), 'tQSSA': initial_S, 'sQSSA': initial_S}
+    completion_states = {'Exact': (0, ST), 'tQSSA': ST, 'sQSSA': ST}
 
     for s in sim:
-        for bin, i in zip(bins, range(bins.size)):
+        for i, bin in enumerate(bins):
             c[s].simulate(dt=1e-4, t_final=bin, noreturn=True)
             completion_time_weights[s][i] = c[s].p[completion_states[s]]
 
@@ -58,67 +59,51 @@ def start_simulation():
     t = (bins[1:] + bins[:-1]) / 2
 
     for s in sim:
-        average, sd = SimulationFunctionsOnly.weighted_ave_sd(t, weights=completion_time_weights[s])
+        average, sd = weighted_average_and_std(t, weights=completion_time_weights[s])
         print(s, average, '+/-', sd)
 
-    fig, ax = plt.subplots(figsize=(5, 4), dpi=100)  # Create a matplotlib figure
+    ax.clear()
     ax.hist(t, bins, weights=completion_time_weights['Exact'], label='Exact', density=True, color='blue', histtype='step', fill=False)
     ax.hist(t, bins, weights=completion_time_weights['tQSSA'], label='tQSSA', density=True, color='red', alpha=.6)
     ax.hist(t, bins, weights=completion_time_weights['sQSSA'], label='sQSSA', density=True, color='gray', alpha=.3)
 
-    ax.set_ylim(0, .4)
+    ax.set_ylim(0, 0.4)
     ax.set_xlabel('Completion time (τ)')
     ax.set_ylabel('Probability density')
     ax.legend()
 
-    canvas = FigureCanvasTkAgg(fig, master=root)  # A tk.DrawingArea.
     canvas.draw()
 
-    canvas.get_tk_widget().grid(row=5, column=0, columnspan=6)
-
 root = tk.Tk()
-root.title("Kinetic Reaction Simulator")
+root.title('Kinetic Reaction Simulator')
 
-# Initial S
-label1 = ttk.Label(root, text="Initial S:")
-label1.grid(row=0, column=0)
+fig, ax = plt.subplots()
+canvas = FigureCanvasTkAgg(fig, master=root)
+canvas.get_tk_widget().grid(row=5, column=0, columnspan=6)
 
-entry1 = ttk.Entry(root)
-entry1.grid(row=0, column=1)
+# Create and layout input widgets
+input_labels = ['ET value:', 'ST value:', 'kf value:', 'kb value:', 'kcat value:']
+input_entries = []
+default_entries = ['10', '9', '10', '9', '1']
 
-# Initial E
-label2 = ttk.Label(root, text="Initial E:")
-label2.grid(row=0, column=2)
+for i, label_text in enumerate(input_labels):
+    ttk.Label(root, text=label_text).grid(row=0, column=i)
+    entry = ttk.Entry(root)
+    entry.insert(0, default_entries[i])
+    entry.grid(row=1, column=i)
+    input_entries.append(entry)
 
-entry2 = ttk.Entry(root)
-entry2.grid(row=0, column=3)
+# Label for Max Time
+ttk.Label(root, text='Max Time:').grid(row=2, column=0)
+entry_time = ttk.Entry(root)
+entry_time.insert(0, '9')
+entry_time.grid(row=2, column=1)
 
-# kf value
-label3 = ttk.Label(root, text="kf value:")
-label3.grid(row=1, column=0)
-
-entry3 = ttk.Entry(root)
-entry3.grid(row=1, column=1)
-
-# kb value
-label4 = ttk.Label(root, text="kb value:")
-label4.grid(row=1, column=2)
-
-entry4 = ttk.Entry(root)
-entry4.grid(row=1, column=3)
-
-# kcat value
-label5 = ttk.Label(root, text="kcat value:")
-label5.grid(row=1, column=4)
-
-entry5 = ttk.Entry(root)
-entry5.grid(row=1, column=5)
-
-start_button = ttk.Button(root, text="Start Simulation", command=start_simulation)
+# Start button
+start_button = ttk.Button(root, text='Run simulation', command=run_simulation)
 start_button.grid(row=2, columnspan=6)
 
-result_label = ttk.Label(root, text="SIMULATION RESULTS")
+result_label = ttk.Label(root, text='SIMULATION RESULTS')
 result_label.grid(row=3, columnspan=6)
 
 root.mainloop()
-
