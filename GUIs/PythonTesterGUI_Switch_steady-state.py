@@ -12,12 +12,12 @@ sys.path.append('..')
 
 import SimulationFunctionsOnly 
 
-def start_simulation():
+def run_simulation():
 
     # ESTABLISHING INITIAL CONDITIONS AND PARAMETERS
 
-    DT = float(entry_DT.get())
-    ST = float(entry_ST.get())
+    DT = float(input_entries[1].get())
+    ST = float(input_entries[2].get())
 
     initial_SP = 0
     initial_C  = 0
@@ -28,19 +28,19 @@ def start_simulation():
 
     # Getting the user input from the entry widgets and setting constants
 
-    kfe = float(entry_kfe.get())  # kfe value
-    kbe = float(entry_kbe.get())  # kbe value
-    ke  = float(entry_ke.get())   # ke value
-    kfd = float(entry_kfd.get())  # kfd value
-    kbd = float(entry_kbd.get())  # kbd value
-    kd  = float(entry_kd.get())   # kd value
+    kfe = float(input_entries[3].get())  # kfe value
+    kbe = float(input_entries[4].get())  # kbe value
+    ke  = float(input_entries[5].get())   # ke value
+    kfd = float(input_entries[6].get())  # kfd value
+    kbd = float(input_entries[7].get())  # kbd value
+    kd  = float(input_entries[8].get())   # kd value
 
     kME, kMD = SimulationFunctionsOnly.Constants_Switch(kfe, kbe, ke, kfd, kbd, kd)
     
     # SETTING TIME SPAN
 
     # Getting the user input for maximum ke ET / kd DT ratio
-    max_ratio = float(entry_max_ratio.get())
+    max_ratio = float(input_entries[0].get())
 
     # Creating the ke ET / kd DT ratio span
     ratio_span = np.linspace(0, max_ratio, 1000)
@@ -74,11 +74,9 @@ def start_simulation():
     QSSA_SP_hat_ST = QSSA_SP_hat / ST
     tQSSA_SP_hat_ST = tQSSA_SP_hat / ST
 
-
     # Plots
 
-    # Create a new figure for the plot
-    fig, ax = plt.subplots()
+    ax.clear()
 
     # Plot the data
     ax.plot(ratio_span, Full_Model_SP_hat_ST, label='Full Model', color='yellow', linewidth=3.5)
@@ -89,91 +87,35 @@ def start_simulation():
     ax.set_ylabel('steady-state $\hat{S}_P/S_T$')
     ax.legend()
 
-    # Embed the plot in the Tkinter window
-    canvas = FigureCanvasTkAgg(fig, master=rootSwitch)
-    canvas.get_tk_widget().grid(row=5, columnspan=6)
+    # Update the Tkinter canvas
+
+    canvas.draw()
 
 
-rootSwitch = tk.Tk()
-rootSwitch.title("Kinetic Reaction Simulator - GK Switch steady state")
+root = tk.Tk()
+root.title('Kinetic Reaction Simulator - GK Switch steady state')
 
-# ET
-label_max_ratio = ttk.Label(rootSwitch, text="Max ke ET / kd DT ratio:")
-label_max_ratio.grid(row=0, column=0)
+fig, ax = plt.subplots()
+canvas = FigureCanvasTkAgg(fig, master=root)
+canvas.get_tk_widget().grid(row=8, column=0, columnspan=6)
 
-entry_max_ratio = ttk.Entry(rootSwitch)
-entry_max_ratio.insert(0, "2")
-entry_max_ratio.grid(row=0, column=1)
+# Create and layout input widgets
+input_labels = ['Max ke ET / kd DT ratio:', 'DT value:', 'ST value:', 'kfe value:', 'kbe value:', 'ke value:', 'kfd value:', 'kbd value:', 'kd value:']
+input_entries = []
+default_entries = ['2', '100', '100', '10', '8.3', '1.7', '10', '8.3', '1.7']
 
-# DT
-label_DT = ttk.Label(rootSwitch, text="DT:")
-label_DT.grid(row=0, column=2)
-
-entry_DT = ttk.Entry(rootSwitch)
-entry_DT.insert(0, "100")
-entry_DT.grid(row=0, column=3)
-
-# ST
-label_ST = ttk.Label(rootSwitch, text="ST:")
-label_ST.grid(row=0, column=4)
-
-entry_ST = ttk.Entry(rootSwitch)
-entry_ST.insert(0, "100")
-entry_ST.grid(row=0, column=5)
-
-# kfe value
-label_kfe = ttk.Label(rootSwitch, text="kfe value:")
-label_kfe.grid(row=1, column=0)
-
-entry_kfe = ttk.Entry(rootSwitch)
-entry_kfe.insert(0, "10")
-entry_kfe.grid(row=1, column=1)
-
-# kbe value
-label_kbe = ttk.Label(rootSwitch, text="kbe value:")
-label_kbe.grid(row=1, column=2)
-
-entry_kbe = ttk.Entry(rootSwitch)
-entry_kbe.insert(0, "8.3")
-entry_kbe.grid(row=1, column=3)
-
-# ke value
-label_ke = ttk.Label(rootSwitch, text="ke value:")
-label_ke.grid(row=1, column=4)
-
-entry_ke = ttk.Entry(rootSwitch)
-entry_ke.insert(0, "1.7")
-entry_ke.grid(row=1, column=5)
-
-# kfd value
-label_kfd = ttk.Label(rootSwitch, text="kfd value:")
-label_kfd.grid(row=2, column=0)
-
-entry_kfd = ttk.Entry(rootSwitch)
-entry_kfd.insert(0, "10")
-entry_kfd.grid(row=2, column=1)
-
-# kbd value
-label_kbd = ttk.Label(rootSwitch, text="kbd value:")
-label_kbd.grid(row=2, column=2)
-
-entry_kbd = ttk.Entry(rootSwitch)
-entry_kbd.insert(0, "8.3")
-entry_kbd.grid(row=2, column=3)
-
-# kd value
-label_kd = ttk.Label(rootSwitch, text="kd value:")
-label_kd.grid(row=2, column=4)
-
-entry_kd = ttk.Entry(rootSwitch)
-entry_kd.insert(0, "1.7")
-entry_kd.grid(row=2, column=5)
+for i, label_text in enumerate(input_labels):
+    ttk.Label(root, text=label_text).grid(row=(i//3)*2, column=i%3)
+    entry = ttk.Entry(root)
+    entry.insert(0, default_entries[i])
+    entry.grid(row=(i//3)*2+1, column=i%3)
+    input_entries.append(entry)
 
 
-start_button = ttk.Button(rootSwitch, text="Start Simulation", command=start_simulation)
-start_button.grid(row=3, columnspan=6)
+start_button = ttk.Button(root, text='Run simulation', command=run_simulation)
+start_button.grid(row=6, columnspan=6)
 
-label_result = ttk.Label(rootSwitch, text="CONCENTRATION PLOTS")
-label_result.grid(row=4, columnspan=6)
+label_result = ttk.Label(root, text='CONCENTRATION PLOTS')
+label_result.grid(row=7, columnspan=6)
 
-rootSwitch.mainloop()
+root.mainloop()

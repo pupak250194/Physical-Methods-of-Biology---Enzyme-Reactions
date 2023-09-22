@@ -13,7 +13,6 @@ import cme
 
 def run_simulation():
     """Run the simulation and plot the results."""
-    global canvas
     # ESTABLISHING INITIAL CONDITIONS AND PARAMETERS
     ET = int(input_entries[0].get())
     ST = int(input_entries[1].get())
@@ -66,7 +65,7 @@ def run_simulation():
         ax.plot(ts[s], avePs[s], label=s)
         ax.fill_between(ts[s], 0, error, alpha=.3)
 
-    # Embed the figure in the tkinter window
+    # Update the Tkinter canvas
 
     canvas.draw()
 
