@@ -81,7 +81,7 @@ def run_simulation():
     ax.set_ylabel('Products count (average and st. dev., $P$)')
     ax.legend()
 
-    # Embedding the Matplotlib figure in  Tkinter window
+    # Update the Tkinter canvas
 
     canvas.draw()
     

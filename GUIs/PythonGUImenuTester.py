@@ -4,11 +4,8 @@ from tkinter import ttk
 import subprocess
 
 def show_gui(selected_gui):
-    gui_file = f"{selected_gui}.py"
-    gui_path = f"C:\\Users\\39333\\Desktop\\Physical-Methods-of-Biology---Enzyme-Reactions-main\\GUIs\\{gui_file}"
-
     try:
-        subprocess.Popen(["python", gui_path])
+        subprocess.Popen(["python", f"{selected_gui}.py"])
     except FileNotFoundError:
         print(f"GUI {selected_gui} not found.")
 
@@ -22,7 +19,7 @@ root.title("GUI Selector")
 root.geometry("350x200")
 
 # Create a label
-label = ttk.Label(root, text="Select a GUI to start simulation:")
+label = ttk.Label(root, text="Select an experiment to start simulation:")
 label.pack(pady=10)
 
 # Create a combobox (dropdown menu) to select GUI
@@ -46,8 +43,7 @@ combo.current(0)  # Set the default selection
 # Set the width of the dropdown menu
 combo.config(width=max(len(name) for name in options) + 2)
 
-# Create a "Start Simulation" button
-start_button = ttk.Button(root, text="Start Simulation", command=on_select)
+start_button = ttk.Button(root, text="Start simulation", command=on_select)
 start_button.pack(pady=10)
 
 # Start the main event loop
