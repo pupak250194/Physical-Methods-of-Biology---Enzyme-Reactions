@@ -104,6 +104,10 @@ def run_simulation():
     ax.legend()
 
     canvas.draw()
+    
+    # Save plot
+    
+    plt.savefig('Gillespie-stationary.png')
 
 
 root = tk.Tk()

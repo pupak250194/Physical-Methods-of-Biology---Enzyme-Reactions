@@ -58,18 +58,28 @@ def run_simulation():
 
     ax.set_xlabel('Time')
     ax.set_ylabel('Products count (average and st. dev., $P$)')
+    
 
     # Add plots to the figure
     for s in sim:
         error = np.sqrt(np.maximum(msqPs[s] - avePs[s]**2, 0))
-        ax.plot(ts[s], avePs[s], label=s)
+        ax.plot(ts[s], avePs[s], label=f'{s}')
         ax.fill_between(ts[s], 0, error, alpha=.3)
+        
+    ax.legend()  # Add this line to display the legend
 
     # Update the Tkinter canvas
 
     canvas.draw()
+    
+    # Save plot
+    
+    plt.savefig('CME-averages.png')
 
-    print(f'Running simulation with parameters: ST={ST}, ET={ET}, kf={kf}, kb={kb}, kcat={kcat}')    
+    print(f'Running simulation with parameters: ST={ST}, ET={ET}, kf={kf}, kb={kb}, kcat={kcat}')   
+    
+    
+     
 
 
 root = tk.Tk()

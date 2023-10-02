@@ -69,6 +69,10 @@ def run_simulation():
     # Update the Tkinter canvas
 
     canvas.draw()
+    
+    # Save plot
+    
+    plt.savefig('Full-Model.png')
 
     # Replace the print statement with your simulation code
     print(f"Running simulation with parameters: ET={ET}, ST={ST}, C0={initial_C}, P0={initial_P}, kf={kf}, kb={kb}, kcat={kcat}")

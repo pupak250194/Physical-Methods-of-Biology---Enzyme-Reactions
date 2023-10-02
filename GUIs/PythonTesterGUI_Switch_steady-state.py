@@ -90,6 +90,10 @@ def run_simulation():
     # Update the Tkinter canvas
 
     canvas.draw()
+    
+    # Save plot
+    
+    plt.savefig('Switch-stationary.png')
 
 
 root = tk.Tk()

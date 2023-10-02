@@ -108,6 +108,10 @@ def run_simulation():
     ax.legend()
 
     canvas.draw()
+    
+    # Save plot
+    
+    plt.savefig('CME-stationary.png')
 
 
 root = tk.Tk()

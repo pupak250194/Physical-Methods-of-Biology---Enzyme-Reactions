@@ -62,6 +62,10 @@ def run_simulation():
   
     canvas.draw()
     
+    # Save plot
+    
+    plt.savefig('Gillespie-concentrations.png')
+    
           
 root = tk.Tk()
 root.title("Kinetic Reaction Simulator")
