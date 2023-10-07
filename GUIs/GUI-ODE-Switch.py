@@ -81,7 +81,7 @@ def run_simulation():
     
     # Save plot
     
-    plt.savefig('Switch.png')
+    plt.savefig('.\Simulator-Outputs\Switch.png')
 
 
 root = tk.Tk()

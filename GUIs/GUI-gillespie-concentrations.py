@@ -64,7 +64,7 @@ def run_simulation():
     
     # Save plot
     
-    plt.savefig('Gillespie-concentrations.png')
+    plt.savefig('.\Simulator-Outputs\Gillespie-concentrations.png')
     
           
 root = tk.Tk()

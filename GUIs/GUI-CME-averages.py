@@ -74,7 +74,7 @@ def run_simulation():
     
     # Save plot
     
-    plt.savefig('CME-averages.png')
+    plt.savefig('.\Simulator-Outputs\CME-averages.png')
 
     print(f'Running simulation with parameters: ST={ST}, ET={ET}, kf={kf}, kb={kb}, kcat={kcat}')   
     

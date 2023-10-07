@@ -111,7 +111,7 @@ def run_simulation():
     
     # Save plot
     
-    plt.savefig('CME-stationary.png')
+    plt.savefig('.\Simulator-Outputs\CME-stationary.png')
 
 
 root = tk.Tk()

@@ -107,7 +107,7 @@ def run_simulation():
     
     # Save plot
     
-    plt.savefig('Gillespie-stationary.png')
+    plt.savefig('.\Simulator-Outputs\Gillespie-stationary.png')
 
 
 root = tk.Tk()

@@ -74,7 +74,7 @@ def run_simulation():
     
     # Save plot
     
-    plt.savefig('Gillespie-completion-times.png')
+    plt.savefig('.\Simulator-Outputs\Gillespie-completion-times.png')
 
 
 root = tk.Tk()

@@ -87,7 +87,7 @@ def run_simulation():
     
     # Save plot
     
-    plt.savefig('Gillespie-averages.png')
+    plt.savefig('.\Simulator-Outputs\Gillespie-averages.png')
     
     print(f"Running simulation with parameters: ST={ST}, ET={ET}, kf={kf}, kb={kb}, kcat={kcat}")    
 

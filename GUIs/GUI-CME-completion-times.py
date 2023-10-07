@@ -76,7 +76,7 @@ def run_simulation():
     
     # Save plot
     
-    plt.savefig('CME-completion-times.png')
+    plt.savefig('.\Simulator-Outputs\CME-completion-times.png')
 
 root = tk.Tk()
 root.title('Kinetic Reaction Simulator')

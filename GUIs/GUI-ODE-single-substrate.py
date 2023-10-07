@@ -72,7 +72,7 @@ def run_simulation():
     
     # Save plot
     
-    plt.savefig('Full-Model.png')
+    plt.savefig('.\Simulator-Outputs\Full-Model.png')
 
     # Replace the print statement with your simulation code
     print(f"Running simulation with parameters: ET={ET}, ST={ST}, C0={initial_C}, P0={initial_P}, kf={kf}, kb={kb}, kcat={kcat}")
