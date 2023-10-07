@@ -24,16 +24,17 @@ label.pack(pady=10)
 
 # Create a combobox (dropdown menu) to select GUI
 options = [
-    "PythonTesterGUI",
-    "PythonTesterGUI_Switch_steady-state",
-    "PythonTesterGUI-cme-averages",
-    "PythonTesterGUI-cme-completion-times",
-    "PythonTesterGUI-cme-concentrations",
-    "PythonTesterGUI-cme-stationary",
-    "PythonTesterGUI-gillespie-averages",
-    "PythonTesterGUI-gillespie-completion-times",
-    "PythonTesterGUI-gillespie-concentrations",
-    "PythonTesterGUI-gillespie-stationary"
+    "GUI-ODE-single-substrate",
+    "GUI-ODE-Switch",
+    "GUI-ODE-Switch-steady-state",
+    "GUI-CME-averages",
+    "GUI-CME-completion-times",
+    "GUI-CME-concentrations",
+    "GUI-CME-stationary",
+    "GUI-gillespie-averages",
+    "GUI-gillespie-completion-times",
+    "GUI-gillespie-concentrations",
+    "GUI-gillespie-stationary"
 ]  
 
 combo = ttk.Combobox(root, values=options)
