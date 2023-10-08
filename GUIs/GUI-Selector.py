@@ -34,7 +34,8 @@ options = [
     "GUI-gillespie-averages",
     "GUI-gillespie-completion-times",
     "GUI-gillespie-concentrations",
-    "GUI-gillespie-stationary"
+    "GUI-gillespie-stationary",
+    "GUI-Averages-CMEvsGillespie"
 ]  
 
 combo = ttk.Combobox(root, values=options)
