@@ -12,7 +12,7 @@ import gillespie
 def save_figure():
     # Save the figure in the same directory as the Python code
     fig.savefig('.\Simulator-Outputs\Averages-CMEvsGillespie-tQSSA.png')
-    print('Figure saved as Averages-CMEvsGillespie-tQSSA.png')
+    print('Figure saved as \'Averages-CMEvsGillespie-tQSSA.png\'')
     
     
 def run_simulation():
@@ -112,7 +112,7 @@ def run_simulation():
     save_button['state'] = 'normal'
 
 root = tk.Tk()
-root.title('Combined Kinetic Reaction Simulator - Averages for Gillespie and CME')
+root.title('Combined Kinetic Reaction Simulator - Averages for Gillespie and CME - tQSSA model')
 
 # Create and layout input widgets for CME
 input_labels = ['ET value (CME):', 'ST value (CME):', 'kf value (CME):', 'kb value (CME):', 'kcat value (CME):', 'Max Time (CME):']
