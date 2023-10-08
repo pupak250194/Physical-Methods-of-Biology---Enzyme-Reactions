@@ -85,7 +85,7 @@ def run_simulation():
 
 
 root = tk.Tk()
-root.title('Kinetic Reaction Simulator - GK Switch')
+root.title('Kinetic Reaction Simulator - GK Switch with ODE')
 
 fig, ax = plt.subplots()
 canvas = FigureCanvasTkAgg(fig, master=root)

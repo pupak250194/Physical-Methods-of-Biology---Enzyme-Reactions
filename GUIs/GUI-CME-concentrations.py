@@ -103,7 +103,7 @@ def stop_simulation():
         print('Simulation stopped manually.')
 
 root = tk.Tk()
-root.title('Kinetic Reaction Simulator')
+root.title('Kinetic Reaction Simulator - Concentrations for CME')
 
 fig, ax = plt.subplots()
 im = ax.imshow(np.zeros(shape=(10, 10)), norm=colors.SymLogNorm(1e-20), origin='lower')

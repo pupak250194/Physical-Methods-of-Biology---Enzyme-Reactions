@@ -79,7 +79,7 @@ def run_simulation():
     plt.savefig('.\Simulator-Outputs\CME-completion-times.png')
 
 root = tk.Tk()
-root.title('Kinetic Reaction Simulator')
+root.title('Kinetic Reaction Simulator - Completion Times for CME')
 
 fig, ax = plt.subplots()
 canvas = FigureCanvasTkAgg(fig, master=root)

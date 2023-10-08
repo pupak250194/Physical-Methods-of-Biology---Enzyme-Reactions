@@ -111,7 +111,7 @@ def run_simulation():
 
 
 root = tk.Tk()
-root.title('Kinetic Reaction Simulator - cme stat')
+root.title('Kinetic Reaction Simulator - Stationary for Gillespie')
 
 fig, ax = plt.subplots()
 canvas = FigureCanvasTkAgg(fig, master=root)

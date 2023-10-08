@@ -24,19 +24,21 @@ label.pack(pady=10)
 
 # Create a combobox (dropdown menu) to select GUI
 options = [
-    "GUI-ODE-single-substrate",
+    "GUI-ODE-Single-Substrate",
     "GUI-ODE-gk-Switch",
-    "GUI-ODE-gk-Switch-steady-state",
-    "GUI-CME-averages",
-    "GUI-CME-completion-times",
-    "GUI-CME-concentrations",
-    "GUI-CME-stationary",
-    "GUI-gillespie-averages",
-    "GUI-gillespie-completion-times",
-    "GUI-gillespie-concentrations",
-    "GUI-gillespie-stationary",
+    "GUI-ODE-gk-Switch-Steady-State",
+    "GUI-CME-Averages",
+    "GUI-CME-Completion-Times",
+    "GUI-CME-Concentrations",
+    "GUI-CME-Stationary",
+    "GUI-Gillespie-Averages",
+    "GUI-Gillespie-Completion-Times",
+    "GUI-Gillespie-Concentrations",
+    "GUI-Gillespie-Stationary",
     "GUI-Averages-CMEvsGillespie",
-    "GUI-Completion-times-CMEvsGillespie"
+    "GUI-Completion-Times-CMEvsGillespie",
+    "GUI-Stationary-CMEvsGillespie"
+    
     
 ]  
 

@@ -79,7 +79,7 @@ def run_simulation():
 
 
 root = tk.Tk()
-root.title('Kinetic Reaction Simulator')
+root.title('Kinetic Reaction Simulator - Single Substrate with ODE')
 
 fig, ax = plt.subplots()
 canvas = FigureCanvasTkAgg(fig, master=root)

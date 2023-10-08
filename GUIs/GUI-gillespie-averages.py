@@ -93,7 +93,7 @@ def run_simulation():
 
 
 root = tk.Tk()
-root.title("Kinetic Reaction Simulator")
+root.title("Kinetic Reaction Simulator - Averages for Gillespie")
 
 fig, ax = plt.subplots()
 canvas = FigureCanvasTkAgg(fig, master=root)
