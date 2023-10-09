@@ -29,7 +29,7 @@ options = [
     "GUI-ODE-gk-Switch-Steady-State",
     "GUI-CME-Averages",
     "GUI-CME-Completion-Times",
-    "GUI-CME-Concentrations",
+    "GUI-CME-Evolutions",
     "GUI-CME-Stationary",
     "GUI-Gillespie-Averages",
     "GUI-Gillespie-Completion-Times",
