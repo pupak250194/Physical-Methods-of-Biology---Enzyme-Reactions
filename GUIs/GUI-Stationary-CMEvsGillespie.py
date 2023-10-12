@@ -31,10 +31,8 @@ def run_simulation():
 
     kME, kMD = SimulationFunctionsOnly.Constants_Switch(kfe, kbe, ke, kfd, kbd, kd)
 
-    simulation_time = float(entry_time.get())
-
-    g_sim = ['tQSSA', 'sQSSA'] 
-    c_sim = ['tQSSA', 'sQSSA'] 
+    g_sim = ['Exact', 'tQSSA', 'sQSSA']
+    c_sim = ['tQSSA', 'sQSSA']
 
     g = {}
     c = {}
@@ -54,7 +52,8 @@ def run_simulation():
     init_conditions_c['tQSSA'][ST // 2] = 1
     init_conditions_c['sQSSA'][ST // 2] = 1
 
-    max_t = simulation_time
+    max_t_g = float(entry_time_gillespie.get())
+    max_t_c = float(entry_time_cme.get())
 
     tracked_species_g = {
         'Exact': np.array([g['Exact'].species.SP, g['Exact'].species.CP], dtype=int),
@@ -67,13 +66,13 @@ def run_simulation():
     for s in g_sim:
         g[s].x = init_conditions_g[s]
         g[s].t = 0
-        x, _ = g[s].simulate(t_final=max_t)
+        x, _ = g[s].simulate(t_final=max_t_g)
         SP_hats[s] = np.sum(x[:, tracked_species_g[s]], axis=1)
 
     for s in c_sim:
         c[s].p = init_conditions_c[s]
         c[s].t = 0
-        c[s].simulate(dt=1e-3, t_final=max_t, noreturn=True)
+        c[s].simulate(dt=1e-3, t_final=max_t_c, noreturn=True)
         SP_hat_dists[s] = c[s].p
     
     print('\nGillespie stats\n')
@@ -87,13 +86,11 @@ def run_simulation():
         print(s, ave, '+/-', np.sqrt(np.maximum(msq - ave**2, 0)))
 
     bins = np.linspace(0, ST, 21)
-    bins_all = np.linspace(0, ST + 1, ST + 2)
-    x = (bins_all[1:] + bins_all[:-1]) / 2
 
     ax.clear()
 
     plt.hist(SP_hats['tQSSA'], bins, label='tQSSA (Gillespie)', density=True, color='blue', alpha=.6, histtype='step')
-    plt.hist(x, bins, weights=SP_hat_dists['tQSSA'], label='tQSSA (CME)', density=True, color='red', alpha=.6)
+    plt.hist(possible_SP_hats, bins, weights=SP_hat_dists['tQSSA'], label='tQSSA (CME)', density=True, color='red', alpha=.6)
 
     ax.set_xlabel('Steady-state phosphorylated substrate count ($\hat{S}_P$)')
     ax.set_ylabel('Probability density')
@@ -108,7 +105,7 @@ fig, ax = plt.subplots()
 fig.subplots_adjust(bottom=0.2)  # Increase space at the bottom
 
 canvas = FigureCanvasTkAgg(fig, master=root)
-canvas.get_tk_widget().grid(row=9, column=0, columnspan=6, pady=(10, 0))
+canvas.get_tk_widget().grid(row=10, column=0, columnspan=6, pady=(10, 0))
 
 # Create and layout input widgets
 input_labels = ['ET value:', 'DT value:', 'ST value:', 'kfe value:', 'kbe value:', 'ke value:',
@@ -124,23 +121,23 @@ for i, label_text in enumerate(input_labels):
     input_entries.append(entry)
 
 # Label for Simulation Time
-ttk.Label(root, text='Simulation Time:').grid(row=6, column=0)
-entry_time = ttk.Entry(root)
-entry_time.insert(0, '10')
-entry_time.grid(row=6, column=1)
+ttk.Label(root, text='Simulation Time (Gillespie):').grid(row=6, column=0)
+entry_time_gillespie = ttk.Entry(root)
+entry_time_gillespie.insert(0, '10000')
+entry_time_gillespie.grid(row=7, column=0)
+
+ttk.Label(root, text='Simulation Time (CME):').grid(row=6, column=1)
+entry_time_cme = ttk.Entry(root)
+entry_time_cme.insert(0, '100')
+entry_time_cme.grid(row=7, column=1)
 
 start_button = ttk.Button(root, text='Run simulation', command=run_simulation)
-start_button.grid(row=7, column=0, columnspan=3, pady=(10, 0))  # Increased vertical space
+start_button.grid(row=8, column=0, columnspan=3, pady=(10, 0))  # Increased vertical space
 
 result_label_cmestat = ttk.Label(root, text="SIMULATION RESULTS")
-result_label_cmestat.grid(row=8, column=0, columnspan=3, pady=(10, 0)) 
+result_label_cmestat.grid(row=9, column=0, columnspan=3, pady=(10, 0)) 
 
 save_button = ttk.Button(root, text='Save Figure', command=save_figure)
 save_button.grid(row=11, columnspan=6)
-
-# Create the plot
-fig, ax = plt.subplots()
-canvas = FigureCanvasTkAgg(fig, master=root)
-canvas.get_tk_widget().grid(row=9, column=0, columnspan=3, pady=(10, 0))  # Increased vertical space
 
 root.mainloop()
