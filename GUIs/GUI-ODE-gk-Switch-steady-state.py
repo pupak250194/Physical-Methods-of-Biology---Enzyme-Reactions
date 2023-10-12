@@ -25,7 +25,6 @@ def run_simulation():
 
     initial_conditions = [initial_SP, initial_C, initial_CP]
 
-
     # Getting the user input from the entry widgets and setting constants
 
     kfe = float(input_entries[3].get())  # kfe value
@@ -50,13 +49,13 @@ def run_simulation():
 
     # solving odes
 
-    Full_Model_Solution = []
-    QSSAsolution = []
-    tQSSAsolution = []
-    for ET in ET_span:
-        Full_Model_Solution.append(fsolve(SimulationFunctionsOnly.Full_Model_Switch, initial_conditions, args=(0, ST, ET, DT, kfe, kbe, ke, kfd, kbd, kd)))
-        QSSAsolution.append(fsolve(SimulationFunctionsOnly.QSSA_Switch, initial_SP, args=(0, ST, ET, DT, ke, kd, kME, kMD)))
-        tQSSAsolution.append(fsolve(SimulationFunctionsOnly.tQSSA_Switch, initial_SP+initial_CP, args=(0, ST, ET, DT, ke, kd, kME, kMD)))
+    Full_Model_Solution = [initial_conditions]
+    QSSAsolution = [[initial_SP]]
+    tQSSAsolution = [[initial_SP+initial_CP]]
+    for ET in ET_span[1:]:
+        Full_Model_Solution.append(fsolve(SimulationFunctionsOnly.Full_Model_Switch, Full_Model_Solution[-1], args=(0, ST, ET, DT, kfe, kbe, ke, kfd, kbd, kd)))
+        QSSAsolution.append(fsolve(SimulationFunctionsOnly.QSSA_Switch, QSSAsolution[-1], args=(0, ST, ET, DT, ke, kd, kME, kMD)))
+        tQSSAsolution.append(fsolve(SimulationFunctionsOnly.tQSSA_Switch, tQSSAsolution[-1], args=(0, ST, ET, DT, ke, kd, kME, kMD)))
 
     # convert lists to numpy arrays
 

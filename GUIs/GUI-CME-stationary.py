@@ -91,17 +91,18 @@ def run_simulation():
     for s in sim: 
         print(s, ave[s], '+/-', np.sqrt(np.maximum(msq[s] - ave[s]**2, 0)))
 
-    bins = np.linspace(0, ST, 21)
-    bins_all = np.linspace(0, ST+1, ST+2)
-    x = (bins_all[1:] + bins_all[:-1])/2
+    if always_div.get():
+        bins = np.linspace(0, ST, 21)
+    else:
+        bins = np.linspace(0, ST+1, ST+2) - 0.5
 
     # Plots
 
     ax.clear()
 
     # Add your histograms
-    ax.hist(x, bins, weights=SP_hat_dists['tQSSA'], label='tQSSA', density=True, color='red', alpha=.6)
-    ax.hist(x, bins, weights=SP_hat_dists['sQSSA'], label='sQSSA', density=True, color='gray', alpha=.3)
+    ax.hist(possible_SP_hats, bins, weights=SP_hat_dists['tQSSA'], label='tQSSA', density=True, color='red', alpha=.6)
+    ax.hist(possible_SP_hats, bins, weights=SP_hat_dists['sQSSA'], label='sQSSA', density=True, color='gray', alpha=.3)
 
     ax.set_xlabel('Steady-state phosphorylated substrate count ($\hat{S}_P$)')
     ax.set_ylabel('Probability density')
@@ -136,8 +137,13 @@ for i, label_text in enumerate(input_labels):
 # Label for Simulation Time
 ttk.Label(root, text='Simulation Time:').grid(row=6, column=0)
 entry_time = ttk.Entry(root)
-entry_time.insert(0, '10')
+entry_time.insert(0, '100')
 entry_time.grid(row=6, column=1)
+
+# Checkbox: always divide into 20 bins
+always_div = tk.BooleanVar()
+checkbox = ttk.Checkbutton(root, text="Always divide into 20 bins", variable=always_div)
+checkbox.grid(row=6, column=2)
 
 start_button = ttk.Button(root, text='Run simulation', command=run_simulation)
 start_button.grid(row=7, columnspan=6)
