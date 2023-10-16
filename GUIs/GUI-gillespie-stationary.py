@@ -86,7 +86,7 @@ def run_simulation():
     for s in sim:
         g[s].x = init_conditions[s]
         g[s].t = 0
-        x, t = g[s].simulate(t_final=max_t, max_steps=int(5e7))
+        x, t = g[s].simulate(t_final=max_t, max_steps=int(1e8))
         SP_hats[s] = np.sum(x[:-1,tracked_species[s]], axis=1)
         weights[s] = np.diff(t)
 

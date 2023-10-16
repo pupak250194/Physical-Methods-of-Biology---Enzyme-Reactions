@@ -16,6 +16,11 @@ def save_figure():
     fig.savefig('.\Simulator-Outputs\Stationary-CMEvsGillespie-tQSSA.png')
     print('Figure saved as \'Stationary-CMEvsGillespie-tQSSA.png\'')
 
+def weighted_ave_sd(arr, weights):
+	average = np.average(arr, weights=weights)
+	variance = np.average((arr-average)**2, weights=weights)
+	return average, np.sqrt(variance)
+
 
 def run_simulation():
     ET = int(input_entries[0].get())
@@ -46,6 +51,7 @@ def run_simulation():
 
     SP_hats = {}
     SP_hat_dists = {}
+    weights = {}
 
     init_conditions_g = {'Exact': [ST // 2, 0, 0], 'tQSSA': [ST // 2], 'sQSSA': [ST // 2]}
     init_conditions_c = {'tQSSA': np.zeros_like(c['tQSSA'].p), 'sQSSA': np.zeros_like(c['sQSSA'].p)}
@@ -61,13 +67,14 @@ def run_simulation():
         'sQSSA': np.array([g['sQSSA'].species.SP], dtype=int)
     }
 
-    possible_SP_hats = np.arange(0, ST + 1)
+    possible_SP_hats = np.arange(0, ST+1)
     
     for s in g_sim:
         g[s].x = init_conditions_g[s]
         g[s].t = 0
-        x, _ = g[s].simulate(t_final=max_t_g)
-        SP_hats[s] = np.sum(x[:, tracked_species_g[s]], axis=1)
+        x, t = g[s].simulate(t_final=max_t_g, max_steps=int(5e7))
+        SP_hats[s] = np.sum(x[:-1, tracked_species_g[s]], axis=1)
+        weights[s] = np.diff(t)
 
     for s in c_sim:
         c[s].p = init_conditions_c[s]
@@ -77,7 +84,8 @@ def run_simulation():
     
     print('\nGillespie stats\n')
     for s in g_sim:
-        print(s, np.mean(SP_hats[s]), '+/-', np.std(SP_hats[s]))
+        average, sd = weighted_ave_sd(SP_hats[s], weights=weights[s])
+        print(s, average, '+/-', sd)
 
     print('\nCME stats\n')
     for s in c_sim:
@@ -89,7 +97,7 @@ def run_simulation():
 
     ax.clear()
 
-    plt.hist(SP_hats['tQSSA'], bins, label='tQSSA (Gillespie)', density=True, color='blue', alpha=.6, histtype='step')
+    plt.hist(SP_hats['tQSSA'], bins, weights=weights['tQSSA'], label='tQSSA (Gillespie)', density=True, color='blue', alpha=.6, histtype='step')
     plt.hist(possible_SP_hats, bins, weights=SP_hat_dists['tQSSA'], label='tQSSA (CME)', density=True, color='red', alpha=.6)
 
     ax.set_xlabel('Steady-state phosphorylated substrate count ($\hat{S}_P$)')
