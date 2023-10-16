@@ -35,6 +35,10 @@ sys.path += ['..', '../stochastic-chemical-kinetics/pybind']
 import SimulationFunctionsOnly
 import gillespie
 
+def weighted_ave_sd(arr, weights):
+	average = np.average(arr, weights=weights)
+	variance = np.average((arr-average)**2, weights=weights)
+	return average, np.sqrt(variance)
 
 def run_simulation():
     """Run the simulation and plot the results."""
@@ -69,6 +73,7 @@ def run_simulation():
     g['sQSSA'] = gillespie.goldbeter_koshland_sqssa(kME=kME, ke=ke, kMD=kMD, kd=kd, ET=ET, DT=DT, ST=ST)
 
     SP_hats = {}
+    weights = {}
     init_conditions = {'Exact': [ST//2, 0, 0], 'tQSSA': [ST//2], 'sQSSA': [ST//2]}
     max_t = simulation_time
 
@@ -81,13 +86,18 @@ def run_simulation():
     for s in sim:
         g[s].x = init_conditions[s]
         g[s].t = 0
-        x, _ = g[s].simulate(t_final=max_t)
-        SP_hats[s] = np.sum(x[:,tracked_species[s]], axis=1)
+        x, t = g[s].simulate(t_final=max_t, max_steps=int(1e8))
+        SP_hats[s] = np.sum(x[:-1,tracked_species[s]], axis=1)
+        weights[s] = np.diff(t)
 
     for s in sim:
-        print(s, np.mean(SP_hats[s]), '+/-', np.std(SP_hats[s]))
+        average, sd = weighted_ave_sd(SP_hats[s], weights=weights[s])
+        print(s, average, '+/-', sd)
 
-    bins = np.linspace(0, ST, 21)
+    if always_div.get():
+        bins = np.linspace(0, ST, 21)
+    else:
+        bins = np.linspace(0, ST+1, ST+2) - 0.5
 
     # Plots
 
@@ -95,9 +105,9 @@ def run_simulation():
 
     # Add your histograms
 
-    ax.hist(SP_hats['Exact'], bins, label='Exact', density=True, color='blue', histtype='step', fill=False)
-    ax.hist(SP_hats['tQSSA'], bins, label='tQSSA', density=True, color='red', alpha=.6)
-    ax.hist(SP_hats['sQSSA'], bins, label='sQSSA', density=True, color='gray', alpha=.3)
+    ax.hist(SP_hats['Exact'], bins, weights=weights['Exact'], label='Exact', density=True, color='blue', histtype='step', fill=False)
+    ax.hist(SP_hats['tQSSA'], bins, weights=weights['tQSSA'], label='tQSSA', density=True, color='red', alpha=.6)
+    ax.hist(SP_hats['sQSSA'], bins, weights=weights['sQSSA'], label='sQSSA', density=True, color='gray', alpha=.3)
 
     ax.set_xlabel('Steady-state phosphorylated substrate count ($\hat{S}_P$)')
     ax.set_ylabel('Probability density')
@@ -134,6 +144,11 @@ ttk.Label(root, text='Simulation Time:').grid(row=6, column=0)
 entry_time = ttk.Entry(root)
 entry_time.insert(0, '10000')
 entry_time.grid(row=6, column=1)
+
+# Checkbox: always divide into 20 bins
+always_div = tk.BooleanVar()
+checkbox = ttk.Checkbutton(root, text="Always divide into 20 bins", variable=always_div)
+checkbox.grid(row=6, column=2)
 
 start_button = ttk.Button(root, text='Run simulation', command=run_simulation)
 start_button.grid(row=7, columnspan=6)

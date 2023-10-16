@@ -51,13 +51,13 @@ def run_simulation():
         for i in range(n_simulations):
             g[s].x = init_conditions[s]
             g[s].t = 0
-            g[s].simulate(t_final=max_t, noreturn=True)
+            g[s].simulate(t_final=max_t+1, noreturn=True)
             completion_times[s][i] = g[s].t
 
     for s in sim:
         print(s, np.mean(completion_times[s]), '+/-', np.std(completion_times[s]))
 
-    bins = np.linspace(0, 9, 19)
+    bins = np.linspace(0, max_t, 19)
 
     ax.clear()
 
