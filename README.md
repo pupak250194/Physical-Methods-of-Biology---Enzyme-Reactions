@@ -42,6 +42,13 @@ Note that for the deterministic case the system is solved directly by running th
 - Tkinter for GUI elements, like buttons and text fields
 - Custom modules "gillespie" and "cme" written in C++ and made available as Python libraries thanks to Pybind11.
 
+# Mass action law
+
+Let's consider an elementary reaction such that
+
+```math
+\sum_i m_i X_i \rightarrow \sum_i n_i X_i
+```
 # Law of mass action and application to enzyme kinetics
 
 Solution of the deterministic case for both the single substrate-enzyme catalyzed reaction and the Goldbeter-Koshland switch, based on the exact model, the standard quasi steady state approximation (sQSSA or QSSA) and the total quasi steady state approximation (tQSSA). 
@@ -57,6 +64,8 @@ $\ce{S + E ->[kf] C}$
 $\ce{C ->[kb] E + S}$
 
 $\ce{C->[kcat] P + E}$
+
+where S is the substrate, E is the enzyme binding to the substrate, C represents the enzyme-substrate complex and P is the product of the reaction. The reaction is also characterized by some constants: kf (k forward), kb (k backward) and kcat (k catalysis) which define the rate at which each chemical species is turning into another one. 
 
 
 
