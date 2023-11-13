@@ -1,9 +1,3 @@
-# Stochastic chemical kinetics
-
-This README file has been written by Ale Lo Cuoco and it is about the subfolder named stochastic-chemical-kinetics-main. The README part related to the Diff-Eqs subfolder and the GUI's still needs to be written by me. Have fun and keep updated as we continue to modify our project <3
-
-Stochastic chemical kinetics using Gillespie algorithm (also stochastic simulation algorithm or SSA) and chemical master equation (CME), with application to enzyme kinetics.
-
 Bibliography:
 - D. T. Gillespie, *Exact Stochastic Simulation of Coupled Chemical Reactions*, The Journal of Physical Chemistry, Vol. 81, No. 25, 1977.
 - L. A. Segel, M. Slemrod, *The quasi-steady-state assumption: a case study in perturbation*, SIAM Rev. 1989; 31(3):446-477.
@@ -18,11 +12,37 @@ Bibliography:
 - J. K. Kim, J. J. Tyson, *Misuse of the Michaelis-Menten rate law for protein interaction networks and its remedy*, PLoS Computational Biology 16(10), 2020.
 - T.-H. Ahn, Y. Cao, L. T. Watson, *Stochastic Simulation Algorithms for Chemical Reactions*, Virginia Polytechnic Institute and State University, Blacksburg, Virginia.
 
-## The code
+# The code. General description.
+
+The provided code consists of both Python and C++ scripts designed to facilitate the exploration of enzyme-substrate reactions. The Python scripts offer an intuitive Graphical User Interface (GUI), enabling users to analyze simulation results across diverse mathematical models. To run the Python scripts successfully, ffmpeg must be installed, as it is required for generating animations. Key functionalities of the Python scripts include extracting user-supplied parameters, such as total enzyme and substrate counts, and rate constants. Users can input these parameters through a user-friendly interface and initiate the simulation by clicking the "Run Simulation" button. The simulation itself is conducted using the Gillespie algorithm or by integrating the Chemical Master Equation (CME) for precise formulations. Additionally, the scripts support the quasi-steady-state approximation (QSSA) and the total quasi-steady-state approximation (tQSSA) for faster simulations. Post-simulation, the collected data is presented in various formats, including the variation of population numbers/concentrations over time or concerning the variation of a specific parameter. The outputs also encompass probabilities of a given state, statistical averages, standard deviations, probability densities for completion times, and probability densities for steady-state phosphorylated substrate count. The outputs are generated for both the CME and Gillespie simulation methods, providing users with a comprehensive understanding of the enzyme-substrate reactions under different mathematical models.
+
+## Code structure
+
+The repository is composed of the following:
+
+* `GUIs`: directory containing the GUIs to investigate different types of chemical reactions and containing the `Simulatior-Outputs` subfolder, where all simulation results are saved automatically. 
+* `SimulationFunctionsOnly.py file`: file containing the functions required to run the simulation.
+* `Stochastic chemical kinetics`: repository containing all files required to perform stochastic simulations.
+
+Note that for the deterministic case the system is solved directly by running the GUI for the selected reaction, whereas for the stochastic case specific C++ libraries are required and need to be integrated into the GUI files - see the **Stochastic chemical kinetics** section for further detail. The repository also contains a pdf file about the project, containing more detailed theoretical backgrounds, some relevant outputs and their interpretation.
+
+## Dependencies
+
+- NumPy for numerical operations
+- SciPy for numerical integration (odeint, which uses LSODA from the Fortran library Odepack, an implementation of a method by Petzold) and steady-state computation using a root-finding algorithm (fsolve, which uses HYBRD and HYBRJ implmentations from the Fortran library Minpack of the Powell’s hybrid method).
+- Matplotlib for visualization of graphs and animations
+- Tkinter for GUI elements, like buttons and text fields
+- Custom modules "gillespie" and "cme" written in C++ and made available as Python libraries thanks to Pybind11.
+
+# Stochastic chemical kinetics
+
+Stochastic chemical kinetics using Gillespie algorithm (also stochastic simulation algorithm or SSA) and chemical master equation (CME), with application to enzyme kinetics.
+
+## The code for the stochastic simulation
 
 ### Code structure
 
-The code is written as a library in C++20 with Python bindings using [Pybind11](https://github.com/pybind/pybind11). The repository is structured in the following way:
+This part of code is written as a library in C++20 with Python bindings using [Pybind11](https://github.com/pybind/pybind11). The repository is structured in the following way:
 
 * `experiments`: directory containing example code using the library and experiments for University projects.
 * `include/sck`: directory containing the C++ header files to include in implementation files.
@@ -41,6 +61,8 @@ The code is written as a library in C++20 with Python bindings using [Pybind11](
 The C++ header files have no dependencies other than a C++20-complying compiler. To compile the Python bindings, [Pybind11](https://github.com/pybind/pybind11) must be installed on the current machine. For more information on how to compile these bindings, see the individual files inside the `pybind` folder. Rename the library paths accordingly, if needed.
 
 The resulting Python library will require NumPy 1.7.0 or any later version.
+
+# Theory behind the simulation
 
 ## Chemical master equation
 
