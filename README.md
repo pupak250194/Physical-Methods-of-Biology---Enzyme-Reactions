@@ -32,7 +32,7 @@ The repository is composed of the following:
 * `SimulationFunctionsOnly.py file`: file containing the functions required to run the simulation.
 * `Stochastic chemical kinetics`: repository containing all files required to perform stochastic simulations.
 
-Note that for the deterministic case the system is solved directly by running the GUI for the selected reaction, whereas for the stochastic case specific C++ libraries are required and need to be integrated into the GUI file. See the **Stochastic chemical kinetics** for further detail.
+Note that for the deterministic case the system is solved directly by running the GUI for the selected reaction, whereas for the stochastic case specific C++ libraries are required and need to be integrated into the GUI file. See the **Stochastic chemical kinetics** section for further detail.
 
 ## Dependencies
 
@@ -42,22 +42,31 @@ Note that for the deterministic case the system is solved directly by running th
 - Tkinter for GUI elements, like buttons and text fields
 - Custom modules "gillespie" and "cme" written in C++ and made available as Python libraries thanks to Pybind11.
 
-# Mass action law
 
-Let's consider an elementary reaction such that
-
-```math
-\sum_i m_i X_i \rightarrow \sum_i n_i X_i
-```
+ 
 # Law of mass action and application to enzyme kinetics
 
 Solution of the deterministic case for both the single substrate-enzyme catalyzed reaction and the Goldbeter-Koshland switch, based on the exact model, the standard quasi steady state approximation (sQSSA or QSSA) and the total quasi steady state approximation (tQSSA). 
 
+## Mass action law
+
+Let us consider an elementary reaction such that
+
+```math
+\sum_i m_i X_i \rightarrow \sum_i n_i X_i
+```
+
+where in upper case are the chemical species while in lower case are the initial (reactants) and final (products)stoichiometric coefficients. The law of mass action says that, at constant temperature, in the continuous limit, the concentration rate of each chemical species is given by
+
+```math
+\frac{d [X_i]}{d t} = k (n_i - m_i) \prod_j [X_j]^{m_j}
+```
+
+where $k$ is the reaction rate constant.
+
 ## Single substrate-enzyme catalyzed reaction
 
 A single-substrate enzyme-catalyzed reaction can be described by the following chain of reactions:
-
-**Chemical Reaction:**
 
 $\ce{S + E ->[kf] C}$
 
@@ -66,6 +75,16 @@ $\ce{C ->[kb] E + S}$
 $\ce{C->[kcat] P + E}$
 
 where S is the substrate, E is the enzyme binding to the substrate, C represents the enzyme-substrate complex and P is the product of the reaction. The reaction is also characterized by some constants: kf (k forward), kb (k backward) and kcat (k catalysis) which define the rate at which each chemical species is turning into another one. 
+Due to the mass action law, the reaction cab ne represented by a system of ordinary differential equations (ODEs):
+
+```math
+\frac{d[S]}{dt} &= -k_f [E] [S] + k_b [C], \\
+\frac{d[E]}{dt} &= -k_f [E] [S] + k_b [C] + k_\textrm{cat} [C], \\
+\frac{d[C]}{dt} &=  k_f [E] [S] - k_b [C] - k_\textrm{cat} [C], \\
+\frac{d[P]}{dt} &= k_\textrm{cat} [C]
+```
+
+
 
 
 
