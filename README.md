@@ -78,9 +78,15 @@ where S is the substrate, E is the enzyme binding to the substrate, C represents
 Due to the mass action law, the reaction cab ne represented by a system of ordinary differential equations (ODEs):
 
 ```math
-\frac{d[S]}{dt} &= -k_f [E] [S] + k_b [C], \\
-\frac{d[E]}{dt} &= -k_f [E] [S] + k_b [C] + k_\textrm{cat} [C], \\
-\frac{d[C]}{dt} &=  k_f [E] [S] - k_b [C] - k_\textrm{cat} [C], \\
+\frac{d[S]}{dt} &= -k_f [E] [S] + k_b [C]
+```
+```math
+\frac{d[E]}{dt} &= -k_f [E] [S] + k_b [C] + k_\textrm{cat} [C]
+```
+```math
+\frac{d[C]}{dt} &=  k_f [E] [S] - k_b [C] - k_\textrm{cat} [C]
+```
+```math
 \frac{d[P]}{dt} &= k_\textrm{cat} [C]
 ```
 
