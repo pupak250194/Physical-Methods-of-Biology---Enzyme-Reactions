@@ -53,7 +53,9 @@ A single-substrate enzyme-catalyzed reaction can be described by the following c
 **Chemical Reaction:**
 
 $\ce{S + E ->[kf] C}$
+
 $\ce{C ->[kb] E + S}$
+
 $\ce{C->[kcat] P + E}$
 
 
