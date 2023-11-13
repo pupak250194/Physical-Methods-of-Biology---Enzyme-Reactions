@@ -1,9 +1,3 @@
-# Stochastic chemical kinetics
-
-This README file has been written by Ale Lo Cuoco and it is about the subfolder named stochastic-chemical-kinetics-main. The README part related to the Diff-Eqs subfolder and the GUI's still needs to be written by me. Have fun and keep updated as we continue to modify our project <3
-
-Stochastic chemical kinetics using Gillespie algorithm (also stochastic simulation algorithm or SSA) and chemical master equation (CME), with application to enzyme kinetics.
-
 Bibliography:
 - D. T. Gillespie, *Exact Stochastic Simulation of Coupled Chemical Reactions*, The Journal of Physical Chemistry, Vol. 81, No. 25, 1977.
 - L. A. Segel, M. Slemrod, *The quasi-steady-state assumption: a case study in perturbation*, SIAM Rev. 1989; 31(3):446-477.
@@ -17,6 +11,75 @@ Bibliography:
 - V. Sunkara, *On the Properties of the Reaction Counts Chemical Master Equation*, Entropy 2019, 21(6), 607.
 - J. K. Kim, J. J. Tyson, *Misuse of the Michaelis-Menten rate law for protein interaction networks and its remedy*, PLoS Computational Biology 16(10), 2020.
 - T.-H. Ahn, Y. Cao, L. T. Watson, *Stochastic Simulation Algorithms for Chemical Reactions*, Virginia Polytechnic Institute and State University, Blacksburg, Virginia.
+
+# The code
+
+The code has been written in Python and C++. The Python scripts offer a user-friendly graphical user interface (GUI) for investigating enzyme-substrate reactions, allowing users to compare simulation results across different mathematical models. 
+
+The Python scripts also require ffmpeg to be installed to run animations. Key functionalities include extracting user-supplied parameters like total enzyme and substrate counts and rate constants via the "Run Simulation" button. The simulation is performed using the Gillespie algorithm or integrating the CME for the exact formulation, the quasi-steady-state approximation (QSSA) and the total quasi-steady-state approximation (tQSSA). After the simulation, the collected data is displayed in various forms, including variation of population numbers/concentrations over time or with respect to the variation of a parameter, probabilities of a given state, statistical averages
+and standard deviations, probability densities for completion times, and probability densities for steady-state phosphorylated substrate count. These outputs are generated for both the cme and gillespie simulation methods.
+
+## Code structure
+
+The repository is composed of the following:
+
+* `GUIs`: directory containing the GUIs to investigate different types of chemical reactions and containing the `Simulatior-Outputs` subfolder, where all simulation results are saved automatically. 
+* `SimulationFunctionsOnly.py file`: file containing the functions required to run the simulation.
+* `Stochastic chemical kinetics`: repository containing all files required to perform stochastic simulations.
+
+Note that for the deterministic case the system is solved directly by running the GUI for the selected reaction, whereas for the stochastic case specific C++ libraries are required and need to be integrated into the GUI file. See the **Stochastic chemical kinetics** for further detail.
+
+## Dependencies
+
+• NumPy for numerical operations
+• SciPy for numerical integration (odeint, which uses LSODA from the Fortran library Odepack, an implementation of a method by Petzold) and steady-state computation using a root-finding algorithm (fsolve, which uses HYBRD and HYBRJ implmentations from the Fortran library Minpack of the Powell’s hybrid method).
+• Matplotlib for visualization of graphs and animations
+• Tkinter for GUI elements, like buttons and text fields
+• Custom modules "gillespie" and "cme" written in C++ and made available as Python libraries thanks to Pybind11.
+
+# Law of mass action and application to enzyme kinetics
+
+Solution of the deterministic case for both the single substrate-enzyme catalyzed reaction and the Goldbeter-Koshland switch, based on the exact model, the standard quasi steady state approximation (sQSSA or QSSA) and the total quasi steady state approximation (tQSSA). 
+
+## Single substrate-enzyme catalyzed reaction
+
+A single-substrate enzyme-catalyzed reaction can be described by the following chain of reactions:
+
+**Chemical Reaction:**
+
+\[E + S \overset{k_{\text{f}}}{\underset{k_{\text{b}}}\rightleftharpoons} C \xrightarrow{k_{\text{cat}}} E + P\]
+
+Where:
+- \(E\) is the enzyme,
+- \(S\) is the substrate,
+- \(C\) is the enzyme-substrate complex,
+- \(P\) is the product,
+- \(k_{\text{f}}\) is the forward rate constant,
+- \(k_{\text{b}}\) is the backward rate constant,
+- \(k_{\text{cat}}\) is the catalytic rate constant.
+
+In the forward and backward directions:
+
+\[E + S \xrightarrow{k_{\text{f}}} C \xleftarrow{k_{\text{b}}} E + S\]
+
+In the catalytic step:
+
+\[C \xrightarrow{k_{\text{cat}}} E + P\]
+
+
+
+### sQSSA
+### tQSSA
+
+## Goldebeter-Koshland Switch
+
+### sQSSA
+### tQSSA
+
+
+# Stochastic chemical kinetics
+
+Stochastic chemical kinetics using Gillespie algorithm (also stochastic simulation algorithm or SSA) and chemical master equation (CME), with application to enzyme kinetics.
 
 ## The code
 
