@@ -168,8 +168,93 @@ Note that $[S_T] = [\hat{S}] + [P]$ holds exactly.
 
 ## Goldebeter-Koshland Switch
 
+The Goldbeter-Koshland (GK) switch consists of a substrate-product pair $S,S_P$ that is interconverted by two enzymes $E,D$:
+
+```math
+		\begin{aligned}
+			E + S \overset{k_{fe}}{\underset{k_{be}}\rightleftarrows} C \xrightarrow{k_e} E + S_P \\
+			D + S_P \overset{k_{fd}}{\underset{k_{bd}}\rightleftarrows} C_P \xrightarrow{k_d} D + S
+```
+
+These reactions are commonly used to describe phosphorylation and dephosphorylation processes, where $S$ is phosphorylated by kinase $E$ and $S_P$ is dephosphorylated by phosphatase $D$. From the law of mass action we obtain these six differential equations:
+
+```math
+\frac{d[S]}{dt} &= -k_{fe} [E] [S] + k_{be} [C] + k_d [C_P]
+```
+
+```math
+\frac{d[S_P]}{dt} &= -k_{fd} [D] [S_P] + k_{bd} [C_P] + k_e [C]
+```
+
+```math
+\frac{d[E]}{dt} &= -k_{fe} [E] [S] + k_{be} [C] + k_e [C]
+```
+
+```math
+\frac{d[D]}{dt} &= -k_{fd} [D] [S_P] + k_{bd} [C_P] + k_d [C_P]
+```
+
+```math
+\frac{d[C]}{dt} &=  k_{fe} [E] [S] - k_{be} [C] - k_e [C]
+```
+
+```math
+\frac{d[C_P]}{dt} &=  k_{fd} [D] [S_P] - k_{bd} [C_P] - k_d [C_P]
+```
+		
+Like for the single-substrate case, we have conserved quantities: the total substrate concentration $[S_T] := [S] + [S_P]+[C] + [C_P]$, the total kinase concentration $[E_T] := [E] + [C]$ and the total phosphatase concentration $[D_T] := [D] + [C_P]$. Having these three conserved quantities, only three of the above differential equations are independent. For example, we can choose
+
+```math
+\frac{d[S_P]}{dt} &= -k_{fd} ([D_T] - [C_P]) [S_P] + k_{bd} [C_P] + k_e [C]
+```
+```math
+\frac{d[C]}{dt} &=  k_{fe} ([E_T] - [C]) ([S_T] - [S_P] - [C] - [C_P]) - k_{be} [C] - k_e [C]
+```
+```math
+\frac{d[C_P]}{dt} &=  k_{fd} ([D_T] - [C_P]) [S_P] - k_{bd} [C_P] - k_d [C_P]
+```
+
 ### sQSSA
+The QSSA can be obtained by assuming
+
+```math
+\frac{d[C]}{dt} \approx 0, \qquad \frac{d[C_P]}{dt} \approx 0
+```math
+
+from which, following the same steps as for the single-substrate case, we obtain
+
+```math
+[C] = \frac{[E_T][S]}{K_{ME} + [S]}, \qquad [C_P] = \frac{[D_T][S_P]}{K_{MD} + [S_P]}
+```
+where
+
+```math
+K_{ME} = \frac{k_{be} + k_e}{k_{fe}}, \qquad K_{MD} = \frac{k_{bd} + k_d}{k_{fd}}
+```
+
+Substituting into the equation for $d[S_P]/dt$:
+
+```math
+\frac{d[S_P]}{dt} = \frac{k_e [E_T][S]}{K_{ME} + [S]} - \frac{k_d [D_T][S_P]}{K_{MD} + [S_P]}
+```
+
+Note that $[S_T] \approx [S] + [S_P]$.
+   
 ### tQSSA
+
+The tQSSA is obtained by making two variable changes:
+
+```math
+[\hat{S}] := [S] + [C], \qquad [\hat{S}_P] = [S_P] + [C_P]
+```
+
+Then, applying the quasi-steady state condition as before, we obtain the following expression for the phosphorylated substrate concentration:
+
+```math
+\frac{d[S_P]}{dt} = \frac{2 k_e [E_T][\hat{S}]}{[E_T] + [\hat{S}] + K_{ME} + \sqrt{\left([E_T] + [\hat{S}] + K_{ME}\right)^2 - 4 [E_T] [\hat{S}]}} - \frac{2 k_d [D_T][\hat{S}_P]}{[D_T] + [\hat{S}_P] + K_{MD} + \sqrt{\left([D_T] + [\hat{S}_P] + K_{MD}\right)^2 - 4 [D_T] [\hat{S}_P]}}
+```
+
+Note that $[S_T] = [\hat{S}] + [\hat{S}_P]$ holds exactly.
 
 
 # Stochastic chemical kinetics
