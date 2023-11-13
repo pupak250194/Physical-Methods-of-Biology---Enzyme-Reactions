@@ -38,7 +38,7 @@ Note that for the deterministic case the system is solved directly by running th
 
 Stochastic chemical kinetics using Gillespie algorithm (also stochastic simulation algorithm or SSA) and chemical master equation (CME), with application to enzyme kinetics.
 
-## The code for the stochastic simulation.
+## The code for the stochastic simulation
 
 ### Code structure
 
