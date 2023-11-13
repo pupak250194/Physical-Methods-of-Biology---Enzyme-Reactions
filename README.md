@@ -32,7 +32,7 @@ The repository is composed of the following:
 * `SimulationFunctionsOnly.py file`: file containing the functions required to run the simulation.
 * `Stochastic chemical kinetics`: repository containing all files required to perform stochastic simulations.
 
-Note that for the deterministic case the system is solved directly by running the GUI for the selected reaction, whereas for the stochastic case specific C++ libraries are required and need to be integrated into the GUI file. See the **Stochastic chemical kinetics** section for further detail.
+Note that for the deterministic case the system is solved directly by running the GUI for the selected reaction, whereas for the stochastic case specific C++ libraries are required and need to be integrated into the GUI files. See the **Stochastic chemical kinetics** section for further detail.
 
 ## Dependencies
 
@@ -125,6 +125,46 @@ where $K_M = (k_b + k_\textrm{cat})/k_f$ is the Michaelis-Menten constant. Subst
 which is the Michaelis-Menten rate law. Segel and Slemrod (1989) showed that this approximation is valid for $[E] \ll [S] + [P] + K_M$, which also implies that $[C]$ is negligible with respect to the total substrate-product concentration: $[C] \ll [S] + [P]$. This enables us to make another approximation: $[S_T] \approx [S] + [P]$, so we do not need to know $[C]$ to compute the time evolution of concentration of substrates and products. In many sources, it is also reported the catalytic efficiency (also called specificity constant) for a specific enzyme-substrate pair, given by the ratio $k_\textrm{cat} / K_M$.
    
 ### tQSSA
+
+this approximation is analogous to the sQSSA, with the difference that we perform a change of variable before applying the condition $d[C]/dt \approx 0$, i.e.:
+
+```math
+
+			[\hat{S}] = [S] + [C]
+```
+
+Following the same steps as before, we obtain the following expression for $[C]$:
+
+```math
+[C] = \frac{1}{2} \left([E_T] + [\hat{S}] + K_M - \sqrt{([E_T] + [\hat{S}] + K_M)^2 - 4 [E_T] [\hat{S}]}\right).
+
+```
+
+From the validity condition given by Tzafriri (2003)\cite{bib:tzafriri03}:
+
+```math
+\epsilon_{tQ} ([S_T], [E_T]) = \frac{k_\textrm{cat}}{2 k_f [S_T]} \left(\frac{[E_T] + [S_T] + K_M}{\sqrt{([E_T] + [\hat{S}] + K_M)^2 - 4 [E_T] [\hat{S}]}} - 1\right) \ll 1
+```
+
+it can be shown that
+
+```math
+\epsilon_{tQ} ([S_T], [E_T]) \leq \epsilon_{tQ} (0, K_M) = \frac{k_\textrm{cat}}{4 (k_b + k_\textrm{cat})}.
+```
+
+Since $\epsilon_{tQ} \leq \frac{k_\textrm{cat}}{4 (k_b + k_\textrm{cat})} \leq \frac{1}{4}$ always holds, the condition $\epsilon_{tQ} \ll 1$ is not badly violated even in the worst case, so the range of validity is much wider for tQSSA than standard QSSA. Substituting in the products rate equation, we obtain
+			
+```math
+\frac{d[P]}{dt} = \frac{k_\textrm{cat}}{2} \left([E_T] + [\hat{S}] + K_M - \sqrt{([E_T] + [\hat{S}] + K_M)^2 - 4 [E_T] [\hat{S}]}\right)
+```
+
+which can also be rewritten so that it is more computationally stable for small values of $[\hat{S}]$:
+
+```math
+\frac{d[P]}{dt} = \frac{2 k_\textrm{cat} [E_T] [\hat{S}]}{[E_T] + [\hat{S}] + K_M + \sqrt{([E_T] + [\hat{S}] + K_M)^2 - 4 [E_T] [\hat{S}]}}
+```
+			
+Note that $[S_T] = [\hat{S}] + [P]$ holds exactly.
 
 ## Goldebeter-Koshland Switch
 
