@@ -24,7 +24,7 @@ The repository is composed of the following:
 * `SimulationFunctionsOnly.py file`: file containing the functions required to run the simulation for the deterministic solution of the system.
 * `Stochastic chemical kinetics`: repository containing all files required to perform stochastic simulations.
 
-Note that for the deterministic case the system is solved directly by running the GUI for the selected reaction, whereas for the stochastic case specific C++ libraries are required and need to be integrated into the GUI files - see the **Stochastic chemical kinetics** section for further detail. The repository also contains a pdf file about the project, containing more detailed theoretical backgrounds, some relevant outputs and their interpretation.
+Note that for the deterministic case the system is solved directly by running the GUI for the selected reaction, whereas for the stochastic case specific C++ libraries are required and need to be integrated into the GUI files - see the **Stochastic chemical kinetics** section for further detail. A PDF file explaining the project, with more thorough theoretical underpinnings, some pertinent outputs, and their interpretation, is also available in the repository.
 
 ## Dependencies
 
