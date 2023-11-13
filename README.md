@@ -90,6 +90,15 @@ Due to the mass action law, the reaction cab ne represented by a system of ordin
 \frac{d[P]}{dt} = k_\textrm{cat} [C]
 ```
 
+From the conservation of the total enzyme concentration, we have $[E_T] := [E] + [C]$ such that $\frac{d}{dt}[E_T]=0$. From the conservation of the total substrate and product concentration, we have $[S_T] := [S] + [C] + [P]$ such that $\frac{d}{dt}[S_T]=0$. The existence of these constants implies that there are only two independent ODEs to solve, corresponding to two independent variables, for example $[C]$ and $[P]$:
+
+```math
+			\frac{d[C]}{dt} =  k_f ([E_T] - [C]) ([S_T] - [C] - [P]) - k_b [C] - k_\textrm{cat} [C]
+```
+```math
+			\frac{d[P]}{dt} &= k_\textrm{cat} [C]
+```
+
 
 
 
