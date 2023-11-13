@@ -107,19 +107,19 @@ The number of independent variables can be further reduced to one using approxim
 The quasi-steady state approximation (QSSA, or sQSSA, meaning \textit{standard QSSA}) is obtained under the assumption that $[C]$ does not change appreciably before $[S]$ varies appreciably. Mathematically speaking, we require that
 
 			```math
-				\frac{d[C]}{dt} \approx 0,
+				\frac{d[C]}{dt} \approx 0
 			```
 
 from which we obtain a closed expression for the enzyme-substrate complex concentration $[C]$ as a function of the substrate concentration $[S]$:
 
 			```math
-				[C] = \frac{[E_T] [S]}{[S] + K_M},
+				[C] = \frac{[E_T] [S]}{[S] + K_M}
 			```
 
 where $K_M = (k_b + k_\textrm{cat})/k_f$ is the Michaelis-Menten constant. Substituting in the products rate equation, we obtain
 
 			```math
-				\frac{d[P]}{dt} = \frac{k_\textrm{cat} [E_T] [S]}{[S] + K_M},
+				\frac{d[P]}{dt} = \frac{k_\textrm{cat} [E_T] [S]}{[S] + K_M}
 			```
    
 which is the Michaelis-Menten rate law. Segel and Slemrod (1989) showed that this approximation is valid for $[E] \ll [S] + [P] + K_M$, which also implies that $[C]$ is negligible with respect to the total substrate-product concentration: $[C] \ll [S] + [P]$. This enables us to make another approximation: $[S_T] \approx [S] + [P]$, so we do not need to know $[C]$ to compute the time evolution of concentration of substrates and products. In many sources, it is also reported the catalytic efficiency (also called specificity constant) for a specific enzyme-substrate pair, given by the ratio $k_\textrm{cat} / K_M$.
