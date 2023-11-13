@@ -14,10 +14,15 @@ Bibliography:
 
 # The code
 
-The code has been written in Python and C++. The Python scripts offer a user-friendly graphical user interface (GUI) for investigating enzyme-substrate reactions, allowing users to compare simulation results across different mathematical models. 
+The provided code consists of both Python and C++ scripts designed to facilitate the exploration of enzyme-substrate reactions. The Python scripts offer an intuitive Graphical User Interface (GUI), enabling users to analyze simulation results across diverse mathematical models.
 
-The Python scripts also require ffmpeg to be installed to run animations. Key functionalities include extracting user-supplied parameters like total enzyme and substrate counts and rate constants via the "Run Simulation" button. The simulation is performed using the Gillespie algorithm or integrating the CME for the exact formulation, the quasi-steady-state approximation (QSSA) and the total quasi-steady-state approximation (tQSSA). After the simulation, the collected data is displayed in various forms, including variation of population numbers/concentrations over time or with respect to the variation of a parameter, probabilities of a given state, statistical averages
-and standard deviations, probability densities for completion times, and probability densities for steady-state phosphorylated substrate count. These outputs are generated for both the cme and gillespie simulation methods.
+To run the Python scripts successfully, ensure that ffmpeg is installed, as it is required for generating animations. Key functionalities of the Python scripts include extracting user-supplied parameters, such as total enzyme and substrate counts, and rate constants. Users can input these parameters through a user-friendly interface and initiate the simulation by clicking the "Run Simulation" button.
+
+The simulation itself is conducted using the Gillespie algorithm or by integrating the Chemical Master Equation (CME) for precise formulations. Additionally, the scripts support the quasi-steady-state approximation (QSSA) and the total quasi-steady-state approximation (tQSSA) for faster simulations.
+
+Post-simulation, the collected data is presented in various formats, including the variation of population numbers/concentrations over time or concerning the variation of a specific parameter. The outputs also encompass probabilities of a given state, statistical averages, standard deviations, probability densities for completion times, and probability densities for steady-state phosphorylated substrate count.
+
+It's noteworthy that these outputs are generated for both the CME and Gillespie simulation methods, providing users with a comprehensive understanding of the enzyme-substrate reactions under different mathematical models.
 
 ## Code structure
 
@@ -31,11 +36,11 @@ Note that for the deterministic case the system is solved directly by running th
 
 ## Dependencies
 
-• NumPy for numerical operations
-• SciPy for numerical integration (odeint, which uses LSODA from the Fortran library Odepack, an implementation of a method by Petzold) and steady-state computation using a root-finding algorithm (fsolve, which uses HYBRD and HYBRJ implmentations from the Fortran library Minpack of the Powell’s hybrid method).
-• Matplotlib for visualization of graphs and animations
-• Tkinter for GUI elements, like buttons and text fields
-• Custom modules "gillespie" and "cme" written in C++ and made available as Python libraries thanks to Pybind11.
+- NumPy for numerical operations
+- SciPy for numerical integration (odeint, which uses LSODA from the Fortran library Odepack, an implementation of a method by Petzold) and steady-state computation using a root-finding algorithm (fsolve, which uses HYBRD and HYBRJ implmentations from the Fortran library Minpack of the Powell’s hybrid method).
+- Matplotlib for visualization of graphs and animations
+- Tkinter for GUI elements, like buttons and text fields
+- Custom modules "gillespie" and "cme" written in C++ and made available as Python libraries thanks to Pybind11.
 
 # Law of mass action and application to enzyme kinetics
 
@@ -47,24 +52,6 @@ A single-substrate enzyme-catalyzed reaction can be described by the following c
 
 **Chemical Reaction:**
 
-\[E + S \overset{k_{\text{f}}}{\underset{k_{\text{b}}}\rightleftharpoons} C \xrightarrow{k_{\text{cat}}} E + P\]
-
-Where:
-- \(E\) is the enzyme,
-- \(S\) is the substrate,
-- \(C\) is the enzyme-substrate complex,
-- \(P\) is the product,
-- \(k_{\text{f}}\) is the forward rate constant,
-- \(k_{\text{b}}\) is the backward rate constant,
-- \(k_{\text{cat}}\) is the catalytic rate constant.
-
-In the forward and backward directions:
-
-\[E + S \xrightarrow{k_{\text{f}}} C \xleftarrow{k_{\text{b}}} E + S\]
-
-In the catalytic step:
-
-\[C \xrightarrow{k_{\text{cat}}} E + P\]
 
 
 
