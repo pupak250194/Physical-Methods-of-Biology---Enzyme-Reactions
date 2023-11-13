@@ -20,7 +20,7 @@ The provided code consists of both Python and C++ scripts designed to facilitate
 
 The repository is composed of the following:
 
-* `GUIs`: directory containing the GUIs to investigate different types of chemical reactions and containing the `Simulatior-Outputs` subfolder, where all simulation results are saved automatically. 
+* `GUIs`: directory containing the GUIs to investigate different types of chemical reactions and containing the `Simulatior-Outputs` subfolder, where all simulation results are saved automatically. The outputs are named after the values set to perform the simulation - e.g. E100-S10 stands for 100 molecules of enzyme E vs 10 molecules of substrate S.
 * `SimulationFunctionsOnly.py file`: file containing the functions required to run the simulation for the deterministic solution of the system.
 * `Stochastic chemical kinetics`: repository containing all files required to perform stochastic simulations.
 
