@@ -107,7 +107,7 @@ The number of independent variables can be further reduced to one using approxim
 The quasi-steady state approximation (QSSA, or sQSSA, meaning \textit{standard QSSA}) is obtained under the assumption that $[C]$ does not change appreciably before $[S]$ varies appreciably. Mathematically speaking, we require that
 
 			```math
-				\frac{d[C]}{dt} \ll 0
+				\frac{d[C]}{dt} =  k_f [E] [S] - k_b [C] - k_\textrm{cat} [C]
 			```
 
 from which we obtain a closed expression for the enzyme-substrate complex concentration $[C]$ as a function of the substrate concentration $[S]$:
