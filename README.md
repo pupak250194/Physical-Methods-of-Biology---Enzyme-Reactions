@@ -52,6 +52,8 @@ A single-substrate enzyme-catalyzed reaction can be described by the following c
 
 **Chemical Reaction:**
 
+$\ce{A ->[{text above}][{text below}] B}$
+
 
 
 
