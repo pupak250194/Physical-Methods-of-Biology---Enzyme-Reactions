@@ -25,7 +25,7 @@ import matplotlib.pyplot as plt
 from matplotlib import animation, colors
 import sys
 
-sys.path += ['C:/Users/39333/Desktop/Physical-Methods-of-Biology---Enzyme-Reactions-main/Differential-Eqs','C:/Users/39333/Desktop/Physical-Methods-of-Biology---Enzyme-Reactions-main/stochastic-chemical-kinetics-main/pybind']
+sys.path += ['../pybind']
 
 
 

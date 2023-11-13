@@ -20,7 +20,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 
-sys.path.append('C:/Users/39333/Desktop/Physical-Methods-of-Biology---Enzyme-Reactions-main/stochastic-chemical-kinetics-main/pybind')
+sys.path.append('../pybind')
 
 
 import cme
